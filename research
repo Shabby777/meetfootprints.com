@@ -1,0 +1,56 @@
+I reviewed the Word spec and both mockups. The big takeaway is that this is not just a visual refresh for `/clinical-staff`; it’s a broader product brief covering UX, content structure, SEO, analytics, and CMS/data requirements.
+
+The document says the current page is too flat and should evolve into:
+- A stronger therapist listing page with search, filtering, active filter chips, pagination, and better CTAs.
+- Individual therapist profile pages with richer content.
+- SEO-friendly filtered states/views and structured data.
+- A content layer via blog/articles/publications tied back to therapists.
+
+From the spec, the main feature requirements are:
+- Clickable therapist cards that lead to dedicated profile pages.
+- Therapist photo gallery on profiles, plus richer media support in CMS.
+- Pricing/session cost display, insurance, sliding scale, and consultation info.
+- Prominent booking CTA on cards and profiles, with GA4 tracking.
+- Blog/articles/publications sections, both sitewide and per therapist.
+- State/location filters for `NY`, `NJ`, `FL`, `CT`, `NV`.
+- Advanced multidimensional filters with AND logic and URL query persistence.
+- Accessibility, schema markup, canonical handling, and SEO keyword mapping.
+
+The desktop mockup shows:
+- Left sidebar “Advanced Filters”.
+- Result count above therapist cards.
+- Card grid with photo, credentials, short bio, `View Profile`, and `Book Consultation`.
+- Pagination.
+- Strong pink/magenta brand palette with soft blush backgrounds.
+
+The mobile mockup adds:
+- Search bar at top.
+- Active filter chips under search.
+- A compact card layout.
+- A mobile filter experience as a bottom drawer/modal.
+- Clear `Apply Filters` and `Clear All` actions.
+
+One important note: the mockups mainly represent the listing/filter experience, while the document goes much further into profile-page content, SEO behavior, CMS fields, analytics, and launch/QA expectations.
+
+If you want, the next best step is for me to turn this into one of these:
+1. A clean implementation checklist.
+2. A page-by-page feature breakdown for developers.
+3. A prioritized build plan for the repo.
+
+## Old site analysis
+
+Yes, that live page is the old implementation: [clinical-staff](https://footprintsmentalhealthcounseling.com/clinical-staff).
+
+Comparing the live page to the doc and mockups, the old page is much simpler and has a few obvious issues:
+- It’s essentially a long stacked directory of therapist entries, not the redesigned filterable card experience.
+- There’s no advanced filtering, no search, no active filter chips, and no mobile filter drawer.
+- There are no dedicated profile-page CTAs or richer profile structures.
+- The page content looks structurally messy in places, with repeated headings/names in the rendered HTML.
+- It doesn’t reflect the new desktop/mobile visual system from the mockups.
+
+So we can treat that live URL as the baseline “before” version, and the Word doc plus the two images as the target “after” direction.
+
+If you want, I can do the next step and turn this into:
+1. a gap analysis between old page and new design,
+2. a concrete implementation plan for this repo, or
+3. start building the new clinical staff page directly.

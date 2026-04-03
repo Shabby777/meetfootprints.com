@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Therapist | Footprints to Feel Better</title>
+  <meta
+    name="description"
+    content="Browse Footprints therapists by state, specialty, language, therapy type, price, and availability."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="topbar">
+      <div class="brand">
+        <img class="brand-logo" src="logo.png" alt="Footprints to Feel Better logo">
+        <div>
+          <p class="brand-name">Footprints to Feel Better</p>
+        </div>
+      </div>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="#">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Services</a>
+        <a href="#" aria-current="page">Clinical Staff</a>
+        <a href="#">Contact</a>
+      </nav>
+      <a class="phone-link" href="tel:+16462042295">(646) 204-2295</a>
+      <button class="icon-button nav-toggle" type="button" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div class="service-strip">Serving New York - New Jersey - Connecticut - Florida - Nevada</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Compassionate support, tailored to your needs</p>
+        <h1>Find Your Therapist</h1>
+        <p class="hero-copy">
+          Explore clinicians by specialty, language, therapy type, and availability to find the right fit.
+        </p>
+      </div>
+    </section>
+
+    <section class="directory">
+      <div class="toolbar">
+        <div class="search-row">
+          <label class="search-box" for="therapist-search">
+            <span class="sr-only">Search therapists</span>
+            <input id="therapist-search" type="search" placeholder="Search therapists, specialties, or languages">
+          </label>
+          <button class="mobile-filter-trigger" type="button" id="open-filters">
+            <span class="filter-icon" aria-hidden="true"></span>
+            Filters
+          </button>
+        </div>
+        <div class="active-filters" id="active-filters" aria-live="polite"></div>
+      </div>
+
+      <div class="directory-layout">
+        <aside class="filters-panel desktop-filters" aria-label="Advanced filters">
+          <div class="filter-header">
+            <h2>Advanced Filters</h2>
+            <button class="text-button" type="button" data-clear-filters>Reset Filters</button>
+          </div>
+
+          <div class="filter-group">
+            <h3>State</h3>
+            <div class="filter-options" id="state-options"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>Specialties</h3>
+            <div class="filter-options" id="specialties-options"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>Languages</h3>
+            <div class="filter-options" id="languages-options"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>Therapy Type</h3>
+            <div class="filter-options" id="therapyTypes-options"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>Availability</h3>
+            <div class="filter-options" id="availability-options"></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-range-header">
+              <h3>Price Range</h3>
+              <output id="price-output">$0 - $300+</output>
+            </div>
+            <div class="range-grid">
+              <label>
+                <span>Minimum</span>
+                <input type="range" id="price-min" min="0" max="300" step="25" value="0">
+              </label>
+              <label>
+                <span>Maximum</span>
+                <input type="range" id="price-max" min="0" max="300" step="25" value="300">
+              </label>
+            </div>
+          </div>
+
+        </aside>
+
+        <section class="results-panel">
+          <div class="results-topline">
+            <div>
+              <p class="results-label">Therapist Directory</p>
+              <p class="results-count" id="results-count">Loading therapists...</p>
+            </div>
+            <p class="results-note">Refines instantly as you choose filters</p>
+          </div>
+
+          <div class="cards-grid" id="cards-grid" aria-live="polite"></div>
+          <nav class="pagination hidden" id="pagination" aria-label="Therapist pages"></nav>
+          <div class="no-results hidden" id="no-results">
+            <h2>No results found</h2>
+            <p>Try broadening your filters or clearing them to see more therapists.</p>
+            <button class="secondary-button" type="button" data-clear-filters>Clear all filters</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="mobile-filters-backdrop hidden" id="mobile-filters-backdrop"></div>
+  <aside class="mobile-filters hidden" id="mobile-filters" aria-label="Mobile filters">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="filter-header">
+      <h2>Advanced Filters</h2>
+      <button class="text-button" type="button" id="close-filters">Close</button>
+    </div>
+    <div class="mobile-filters-content">
+      <div class="filter-group">
+        <h3>State</h3>
+        <div class="filter-options" id="mobile-state-options"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Specialties</h3>
+        <div class="filter-options" id="mobile-specialties-options"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Languages</h3>
+        <div class="filter-options" id="mobile-languages-options"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Therapy Type</h3>
+        <div class="filter-options" id="mobile-therapyTypes-options"></div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Availability</h3>
+        <div class="filter-options" id="mobile-availability-options"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-range-header">
+          <h3>Price Range</h3>
+          <output id="mobile-price-output">$0 - $300+</output>
+        </div>
+        <div class="range-grid">
+          <label>
+            <span>Minimum</span>
+            <input type="range" id="mobile-price-min" min="0" max="300" step="25" value="0">
+          </label>
+          <label>
+            <span>Maximum</span>
+            <input type="range" id="mobile-price-max" min="0" max="300" step="25" value="300">
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-actions">
+      <button class="secondary-button" type="button" data-clear-filters>Clear All</button>
+      <button class="primary-button" type="button" id="apply-mobile-filters">Apply Filters</button>
+    </div>
+  </aside>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
+
