@@ -260,6 +260,8 @@ function attachEventListeners() {
     render(true);
   }, 120));
 
+  elements.cardsGrid.addEventListener("click", handleCardActionClick);
+
   document.querySelectorAll("[data-clear-filters]").forEach((button) => {
     button.addEventListener("click", clearAllFilters);
   });
@@ -307,6 +309,35 @@ function attachEventListeners() {
       render();
     }
   });
+}
+
+function handleCardActionClick(event) {
+  const profileButton = event.target.closest("[data-view-profile]");
+  if (profileButton) {
+    const therapistId = profileButton.dataset.therapistId;
+    if (!therapistId) {
+      return;
+    }
+
+    const profileUrl = new URL("therapist-profile.html", window.location.href);
+    profileUrl.searchParams.set("therapist", therapistId);
+    window.location.href = profileUrl.toString();
+    return;
+  }
+
+  const bookButton = event.target.closest("[data-book-consultation]");
+  if (!bookButton) {
+    return;
+  }
+
+  const therapistId = bookButton.dataset.therapistId;
+  if (!therapistId) {
+    return;
+  }
+
+  const bookingUrl = new URL("book-consultation.html", window.location.href);
+  bookingUrl.searchParams.set("therapist", therapistId);
+  window.location.href = bookingUrl.toString();
 }
 
 function renderFilterOptions() {
@@ -540,8 +571,22 @@ function renderCards(therapists) {
         </div>
       </div>
       <div class="card-actions">
-        <button class="primary-button" type="button">View Profile</button>
-        <button class="secondary-button" type="button">Book Consultation</button>
+        <button
+          class="primary-button"
+          type="button"
+          data-view-profile
+          data-therapist-id="${therapist.id}"
+        >
+          View Profile
+        </button>
+        <button
+          class="secondary-button"
+          type="button"
+          data-book-consultation
+          data-therapist-id="${therapist.id}"
+        >
+          Book Consultation
+        </button>
       </div>
     `;
     fragment.appendChild(card);

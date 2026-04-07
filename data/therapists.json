@@ -45,28 +45,6 @@
         "summary":  "Creates a safe space where clients feel seen, heard, and empowered. Practices from a trauma-informed lens with empathy, cultural humility, and collaboration."
     },
     {
-        "id":  "test",
-        "name":  "Demo Test",
-        "image":  "",
-        "title":  "TEST-LP",
-        "location":  "NJ",
-        "specialties":  [
-                            "Validation",
-                            "Youth Support",
-                            "Personal Growth"
-                        ],
-        "languages":  [
-                          "Arabic"
-                      ],
-        "therapyTypes":  [
-                             "Individual",
-                             "Trauma-Informed"
-                         ],
-        "price":  300,
-        "availability":  "Waitlist",
-        "summary":  "Creates a safe space where clients feel seen, heard, and empowered. Practices from a trauma-informed lens with empathy, cultural humility, and collaboration."
-    },
-    {
         "id":  "kevin-adams",
         "name":  "Kevin Adams",
         "image":  "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Kevin%20Adams%20.webp/:/cr=t:0.43%25,l:0%25,w:100%25,h:75.08%25/rs=w:388,h:291.72932330827064,cg:true",
