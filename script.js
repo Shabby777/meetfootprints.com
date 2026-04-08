@@ -1,5 +1,8 @@
 ﻿const FILTER_KEYS = ["state", "specialties", "languages", "therapyTypes", "availability"];
 const PAGE_SIZE = 3;
+const menuToggle = document.querySelector("#menu-toggle");
+const mobileMenu = document.querySelector("#mobile-menu");
+const footerYear = document.querySelector("#home-year");
 const state = {
   therapists: [],
   filteredTherapists: [],
@@ -22,6 +25,27 @@ const state = {
     availability: []
   }
 };
+
+if (menuToggle && mobileMenu) {
+  menuToggle.addEventListener("click", () => {
+    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute("aria-expanded", String(!isOpen));
+    menuToggle.classList.toggle("is-open", !isOpen);
+    mobileMenu.hidden = isOpen;
+  });
+
+  mobileMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.classList.remove("is-open");
+      mobileMenu.hidden = true;
+    });
+  });
+}
+
+if (footerYear) {
+  footerYear.textContent = "© " + new Date().getFullYear() + " Footprints to Feel Better";
+}
 
 const elements = {
   searchInput: document.querySelector("#therapist-search"),

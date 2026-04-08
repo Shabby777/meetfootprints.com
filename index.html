@@ -11,35 +11,46 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   >
+  <link rel="stylesheet" href="home.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="topbar">
-      <div class="brand">
-        <img class="brand-logo" src="logo.png" alt="Footprints to Feel Better logo">
-        <div>
-          <p class="brand-name">Footprints to Feel Better</p>
-        </div>
-      </div>
-      <nav class="desktop-nav" aria-label="Primary">
+  <header class="home-header">
+    <div class="home-topbar">
+      <a class="home-brand" href="home.html" aria-label="Footprints to Feel Better home">
+        <img class="home-brand-logo" src="logo.png" alt="Footprints to Feel Better logo">
+        <span class="home-brand-name">Footprints to Feel Better</span>
+      </a>
+      <nav class="home-nav" aria-label="Primary">
         <a href="home.html">Home</a>
-        <a href="./Designs/about_us_desktop/code.html">About Us</a>
-        <a href="./Designs/services_desktop/code.html">Services</a>
-        <a href="#" aria-current="page">Clinical Staff</a>
-        <a href="./Designs/contact_desktop/code.html">Contact</a>
+        <a href="about.html">About Us</a>
+        <a href="services.html">Services</a>
+        <a href="index.html" aria-current="page">Clinical Staff</a>
+        <a href="contact.html">Contact</a>
       </nav>
-      <a class="phone-link" href="tel:+16462042295">(646) 204-2295</a>
-      <button class="icon-button nav-toggle" type="button" aria-label="Open menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <div class="home-actions">
+        <a class="home-cta home-cta-desktop" href="tel:+16462042295">(646) 204-2295</a>
+        <button class="home-menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
-    <div class="service-strip">Serving New York - New Jersey - Connecticut - Florida - Nevada</div>
+    <div class="home-service-strip">Serving New York, New Jersey, Connecticut, Florida, and Nevada</div>
+    <div class="home-mobile-menu" id="mobile-menu" hidden>
+      <nav class="home-mobile-links" aria-label="Mobile navigation">
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="services.html">Services</a>
+        <a href="index.html" aria-current="page">Clinical Staff</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a class="home-cta home-cta-mobile" href="index.html">Find Your Therapist</a>
+    </div>
   </header>
 
   <main>
@@ -139,6 +150,32 @@
       </div>
     </section>
   </main>
+
+  <footer class="home-footer">
+    <div class="home-shell home-footer-grid">
+      <div>
+        <a class="home-brand home-brand-footer" href="home.html">
+          <img class="home-brand-logo" src="logo.png" alt="Footprints to Feel Better logo">
+          <span class="home-brand-name">Footprints to Feel Better</span>
+        </a>
+        <p class="home-footer-copy">
+          Supportive mental health care with warmth, professionalism, and easier ways to find the right fit.
+        </p>
+      </div>
+      <div class="home-footer-links">
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="services.html">Services</a>
+        <a href="index.html" aria-current="page">Clinical Staff</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="home-footer-contact">
+        <a href="tel:+16462042295">(646) 204-2295</a>
+        <p>Serving NY, NJ, CT, FL, and NV</p>
+        <p id="home-year"></p>
+      </div>
+    </div>
+  </footer>
 
   <div class="mobile-filters-backdrop hidden" id="mobile-filters-backdrop"></div>
   <aside class="mobile-filters hidden" id="mobile-filters" aria-label="Mobile filters">
