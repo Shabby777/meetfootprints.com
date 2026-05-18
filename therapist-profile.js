@@ -81,19 +81,11 @@ function renderTherapistProfile(therapist) {
   document.title = `${therapist.name} | Footprints to Feel Better`;
 
   profileElements.profileName.textContent = therapist.name;
-<<<<<<< Updated upstream
   profileElements.profileRole.textContent = `${therapist.title} | ${therapist.location}`;
   profileElements.profileSummary.textContent = therapist.summary;
   profileElements.heroLocation.textContent = therapist.location;
   profileElements.heroPrice.textContent = formatPrice(STANDARD_SESSION_RATE);
   profileElements.heroAvailability.textContent = therapist.availability;
-=======
-  profileElements.profileRole.textContent = buildRoleLine(therapist);
-  profileElements.profileSummary.textContent = therapist.summary || "Profile details are being updated.";
-  profileElements.heroLocation.textContent = therapist.location || "-";
-  profileElements.heroPrice.textContent = formatPrice(therapist.price);
-  profileElements.heroAvailability.textContent = therapist.availability || "-";
->>>>>>> Stashed changes
 
   profileElements.profileImage.src = therapist.image || "data/portraits/portrait.svg";
   profileElements.profileImage.alt = therapist.name;
