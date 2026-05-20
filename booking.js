@@ -114,17 +114,8 @@ function renderTherapistDetails() {
   bookingElements.therapistImage.src = therapist.image || "data/portraits/portrait.svg";
   bookingElements.therapistImage.alt = therapist.name;
   bookingElements.therapistName.textContent = therapist.name;
-<<<<<<< Updated upstream
   bookingElements.therapistRole.textContent = `${therapist.title} | ${therapist.location} | ${therapist.languages.join(", ")}`;
   bookingElements.therapistPrice.textContent = formatPrice(STANDARD_SESSION_RATE);
-=======
-  bookingElements.therapistRole.textContent = [
-    therapist.title || "Footprints Therapist",
-    therapist.location || "Location TBD",
-    therapist.languages.length ? therapist.languages.join(", ") : "Language details coming soon"
-  ].join(" | ");
-  bookingElements.therapistPrice.textContent = formatPrice(therapist.price);
->>>>>>> Stashed changes
   bookingElements.therapistAvailability.textContent = therapist.availability;
 }
 
