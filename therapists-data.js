@@ -68,21 +68,27 @@
   }
 
   async function fetchJsonFallback(fallbackUrl, fallbackData) {
+    if (fallbackUrl) {
+      try {
+        const response = await fetch(fallbackUrl);
+        if (!response.ok) {
+          throw new Error("Unable to load fallback therapist data.");
+        }
+
+        const json = await response.json();
+        if (Array.isArray(json) && json.length) {
+          return json.map(normalizeTherapist);
+        }
+      } catch (error) {
+        console.warn("Unable to load therapist JSON fallback. Trying inline fallback data.", error);
+      }
+    }
+
     if (Array.isArray(fallbackData) && fallbackData.length) {
       return fallbackData.map(normalizeTherapist);
     }
 
-    if (!fallbackUrl) {
-      return [];
-    }
-
-    const response = await fetch(fallbackUrl);
-    if (!response.ok) {
-      throw new Error("Unable to load fallback therapist data.");
-    }
-
-    const json = await response.json();
-    return Array.isArray(json) ? json.map(normalizeTherapist) : [];
+    return [];
   }
 
   function getStoredSessionToken() {
@@ -100,21 +106,6 @@
 
   async function loadTherapists(options) {
     const settings = options || {};
-
-    if (client) {
-      const result = await client
-        .from("therapists")
-        .select("id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active")
-        .eq("is_active", true)
-        .order("name", { ascending: true });
-
-      if (!result.error) {
-        return result.data.map(mapDbTherapist);
-      }
-
-      console.warn("Supabase therapist load failed. Falling back to local data.", result.error);
-    }
-
     return fetchJsonFallback(settings.fallbackUrl, settings.fallbackData);
   }
 
