@@ -240,13 +240,8 @@
       "Anxiety",
       "ADHD"  
     ],
-<<<<<<< Updated upstream
     "languages": [
       "Engish"
-=======
-    "languages  ": [
-      "English" 
->>>>>>> Stashed changes
     ],
     "therapyTypes": [],
     "availabilit  y": "Available",
