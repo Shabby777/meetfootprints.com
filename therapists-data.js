@@ -119,6 +119,21 @@
 
   async function loadTherapists(options) {
     const settings = options || {};
+
+    if (client) {
+      const result = await client
+        .from("therapists")
+        .select("id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active")
+        .eq("is_active", true)
+        .order("name", { ascending: true });
+
+      if (!result.error) {
+        return result.data.map(mapDbTherapist);
+      }
+
+      console.warn("Supabase therapist load failed. Falling back to local data.", result.error);
+    }
+
     return fetchJsonFallback(settings.fallbackUrl, settings.fallbackData);
   }
 

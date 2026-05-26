@@ -771,6 +771,11 @@ function renderCards(therapists) {
         </button>
       </div>
     `;
+    const cardImage = card.querySelector(".card-image");
+    if (cardImage) {
+      cardImage.src = therapist.image || "data/portraits/portrait.svg";
+      cardImage.alt = therapist.name;
+    }
     fragment.appendChild(card);
   });
 
