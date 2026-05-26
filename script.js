@@ -629,7 +629,7 @@ function render(resetPage = false) {
     : paginateTherapists(state.displayedTherapists, state.currentPage);
 
   updateUrlFromState();
-  renderCards(paginatedTherapists);
+  renderCardsSafe(paginatedTherapists);
   renderResultsCount(state.filteredTherapists.length, state.displayedTherapists.length, state.showingRecommendations);
   renderActiveFilters();
   renderPagination(totalPages);
@@ -776,6 +776,89 @@ function renderCards(therapists) {
       cardImage.src = therapist.image || "data/portraits/portrait.svg";
       cardImage.alt = therapist.name;
     }
+    fragment.appendChild(card);
+  });
+
+  elements.cardsGrid.replaceChildren(fragment);
+}
+
+function renderCardsSafe(therapists) {
+  const fragment = document.createDocumentFragment();
+
+  therapists.forEach((therapist) => {
+    const card = document.createElement("article");
+    card.className = "therapist-card";
+
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "card-image-wrap";
+
+    const cardImage = document.createElement("img");
+    cardImage.className = "card-image";
+    cardImage.src = therapist.image || "data/portraits/portrait.svg";
+    cardImage.alt = therapist.name;
+    cardImage.loading = "lazy";
+    imageWrap.appendChild(cardImage);
+
+    const cardBody = document.createElement("div");
+    cardBody.className = "card-body";
+
+    const cardName = document.createElement("h2");
+    cardName.className = "card-name";
+    cardName.textContent = therapist.name;
+
+    const cardTitle = document.createElement("p");
+    cardTitle.className = "card-title";
+    cardTitle.textContent = therapist.title || "Footprints Therapist";
+
+    const cardMeta = document.createElement("div");
+    cardMeta.className = "card-meta";
+
+    const cardLocation = document.createElement("span");
+    cardLocation.textContent = therapist.location || "Location TBD";
+
+    const metaDot = document.createElement("span");
+    metaDot.className = "meta-dot";
+    metaDot.setAttribute("aria-hidden", "true");
+
+    const cardLanguages = document.createElement("span");
+    cardLanguages.textContent = therapist.languages.length ? therapist.languages.join(" · ") : "Language details coming soon";
+
+    cardMeta.append(cardLocation, metaDot, cardLanguages);
+
+    const cardTags = document.createElement("div");
+    cardTags.className = "card-tags";
+    therapist.specialties.slice(0, 3).forEach((item) => {
+      const chip = document.createElement("span");
+      chip.className = "chip soft";
+      chip.textContent = item;
+      cardTags.appendChild(chip);
+    });
+
+    const cardSummary = document.createElement("p");
+    cardSummary.className = "card-summary";
+    cardSummary.textContent = buildTherapistSummary(therapist);
+
+    cardBody.append(cardName, cardTitle, cardMeta, cardTags, cardSummary);
+
+    const cardActions = document.createElement("div");
+    cardActions.className = "card-actions";
+
+    const viewProfileButton = document.createElement("button");
+    viewProfileButton.className = "primary-button";
+    viewProfileButton.type = "button";
+    viewProfileButton.dataset.viewProfile = "";
+    viewProfileButton.dataset.therapistId = therapist.id;
+    viewProfileButton.textContent = "View Profile";
+
+    const bookConsultationButton = document.createElement("button");
+    bookConsultationButton.className = "secondary-button";
+    bookConsultationButton.type = "button";
+    bookConsultationButton.dataset.bookConsultation = "";
+    bookConsultationButton.dataset.therapistId = therapist.id;
+    bookConsultationButton.textContent = "Book Consultation";
+
+    cardActions.append(viewProfileButton, bookConsultationButton);
+    card.append(imageWrap, cardBody, cardActions);
     fragment.appendChild(card);
   });
 
