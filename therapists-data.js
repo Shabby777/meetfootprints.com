@@ -15,7 +15,8 @@
     therapyTypes: [],
     price: null,
     availability: "Available",
-    summary: ""
+    summary: "",
+    calLink: ""
   };
 
   function slugify(value) {
@@ -57,7 +58,8 @@
       therapyTypes: toArray(next.therapyTypes || next.therapy_types),
       price: next.price === "" || next.price == null || Number.isNaN(Number(next.price)) ? null : Number(next.price),
       availability: String(next.availability || base.availability).trim() || base.availability,
-      summary: String(next.summary || "").trim()
+      summary: String(next.summary || "").trim(),
+      calLink: String(next.calLink || next.cal_link || next.calUrl || next.cal_url || next.calBookingUrl || "").trim()
     };
   }
 
@@ -119,7 +121,6 @@
 
   async function loadTherapists(options) {
     const settings = options || {};
-
     if (client) {
       const result = await client
         .from("therapists")
