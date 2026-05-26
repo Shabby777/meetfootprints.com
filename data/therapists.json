@@ -155,7 +155,7 @@
       "interpersonal"
     ],
     "languages": [
-      "English"
+       "English"
     ],
     "therapyTypes": [],
     "availability": "Available",
@@ -214,11 +214,11 @@
     "summary": "Helping individuals overcome anxiety, bipolar disorder, and substance use challenges with a structured, supportive approach"
   },
   {
-    "id": "samantha-bennett",
+      "id": "samantha-bennett",
     "name": "Samantha Bennett",
     "image": "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Samantha%20Bennett%20.webp/:/cr=t:12.35%25,l:0%25,w:100%25,h:75.29%25/rs=w:720,h:541,cg:true",
     "title": "LP",
-    "location": "NY",
+    "l  ocation": "NY",
     "specialties": [
       "Depression",
       "ADHD"
@@ -233,21 +233,26 @@
   {
     "id": "jennifer-betances",
     "name": "Jennifer Betances",
-    "image": "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Jennifer_Betances.webp/:/cr=t:12.41%25,l:0%25,w:100%25,h:75.19%25/rs=w:388,h:291.72932330827064,cg:true",
+    "image": "https:  //img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Jennifer_Betances.webp/:/cr=t:12.41%25,l:0%25,w:100%25,h:75.19%25/rs=w:388,h:291.72932330827064,cg:true",
     "title": "Fully Licensed",
     "location": "NY",
     "specialties": [
       "Anxiety",
-      "ADHD"
+      "ADHD"  
     ],
+<<<<<<< Updated upstream
     "languages": [
       "Engish"
+=======
+    "languages  ": [
+      "English" 
+>>>>>>> Stashed changes
     ],
     "therapyTypes": [],
-    "availability": "Available",
+    "availabilit  y": "Available",
     "summary": "Empowering individuals to regain stability and control while navigating anxiety, mood shifts, and addiction recovery."
-  },
-  {
+  },  
+  { 
     "id": "kaylah-britt",
     "name": "Kaylah Britt",
     "image": "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Kaylah%20Britt.jpg/:/cr=t:12.41%25,l:0%25,w:100%25,h:75.19%25/rs=w:776,h:583,cg:true",
@@ -297,16 +302,16 @@
     ],
     "therapyTypes": [],
     "availability": "Available",
-    "summary": "Empowering individuals and families to overcome challenges and create positive, lasting change"
+        "summary": "Empowering individuals and families to overcome challenges and create positive, lasting change"
   },
   {
     "id": "emily-cogley",
     "name": "Emily Cogley",
     "image": "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Emily%20Cogley%20.webp/:/cr=t:12.41%25,l:0%25,w:100%25,h:75.19%25/rs=w:388,h:291.72932330827064,cg:true",
     "title": "Fully Licensed",
-    "location": "NY",
-    "specialties": [
-      "Body Dysmorphic Disorder",
+    "loc                                                                                                                                                  ation": "NY",
+    "specialties": [                
+      "Body Dysmorphic Disorder",             
       "LGBTQ"
     ],
     "languages": [
@@ -1035,22 +1040,22 @@
     "languages": [
       "English/Spanish"
     ],
-    "therapyTypes": [],
-    "availability": "Available",
+    "therapyTypes": [],                       
+    "availability": "Available",      
     "summary": "Using creative and client-centered approaches to support emotional balance across diverse experiences."
-  },
-  {
+  },        
+  {     
     "id": "aviva-levitin",
-    "name": "Aviva Levitin",
+    "nam      e": "Aviva Levitin",
     "image": "https://img1.wsimg.com/isteam/ip/be3b4275-20eb-4372-92a9-bcc3a138027c/Aviva_Levitin.webp/:/cr=t:2.84%25,l:0%25,w:100%25,h:75.19%25/rs=w:388,h:291.72932330827064,cg:true",
-    "title": "Fully Licensed",
+    "title": "    Fully Licensed",
     "location": "NY",
     "specialties": [
-      "ADHD",
+      "ADHD", 
       "Anxiety"
     ],
-    "languages": [
-      "English"
+    "languages  ": [
+      "English"   
     ],
     "therapyTypes": [],
     "availability": "Available",

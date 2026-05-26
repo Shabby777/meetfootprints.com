@@ -372,9 +372,17 @@ function initLoginModal() {
 
   therapistLoginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const normalizedEmail = window.therapistDataApi.normalizeStaffEmail(therapistLoginEmailInput.value);
+
+    if (!window.therapistDataApi.isAllowedStaffEmail(normalizedEmail)) {
+      loginModalStatus.textContent = `Only @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email addresses can sign in.`;
+      therapistLoginEmailInput.focus();
+      return;
+    }
+
     loginModalStatus.textContent = "Signing in...";
     const result = await window.therapistDataApi.loginWithPassword(
-      therapistLoginEmailInput.value,
+      normalizedEmail,
       therapistLoginPasswordInput.value
     );
 
@@ -395,6 +403,7 @@ function openLoginModal() {
   loginModal.classList.remove("hidden");
   loginModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+  loginModalStatus.textContent = `Use your @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email to sign in.`;
   therapistLoginEmailInput.focus();
 }
 

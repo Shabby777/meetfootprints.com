@@ -355,6 +355,63 @@ a {
   background: rgba(255, 255, 255, 0.96);
 }
 
+.portal-file-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.portal-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid rgba(161, 24, 89, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 244, 247, 0.96);
+  color: var(--wine-800);
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.portal-icon-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 232, 239, 0.98);
+  box-shadow: 0 10px 20px rgba(111, 15, 69, 0.12);
+}
+
+.portal-icon-button svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.portal-field-helper {
+  margin: 0;
+}
+
+.portal-image-preview-card {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 14px;
+  border: 1px solid rgba(111, 15, 69, 0.12);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--blush-050), rgba(255, 255, 255, 0.96));
+}
+
+.portal-image-preview {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 24px;
+  border: 1px solid rgba(111, 15, 69, 0.14);
+  background: rgba(255, 255, 255, 0.98);
+}
+
 .password-input-wrap {
   position: relative;
 }
