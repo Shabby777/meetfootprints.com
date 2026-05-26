@@ -20,6 +20,8 @@ const portalElements = {
   adminAddTherapist: document.querySelector("#admin-add-therapist"),
   adminTherapistSearch: document.querySelector("#admin-therapist-search"),
   adminTherapistList: document.querySelector("#admin-therapist-list"),
+  imageUpload: document.querySelector("#therapist-image-upload"),
+  deleteProfileImage: document.querySelector("#delete-profile-image"),
   fields: {
     id: document.querySelector("#therapist-id"),
     name: document.querySelector("#therapist-name"),
@@ -72,6 +74,8 @@ function attachPortalEventListeners() {
   });
   portalElements.adminTherapistSearch.addEventListener("input", handleAdminSearchInput);
   portalElements.adminTherapistList.addEventListener("click", handleAdminListClick);
+  portalElements.imageUpload.addEventListener("change", handleImageSelectionChange);
+  portalElements.deleteProfileImage.addEventListener("click", handleProfileImageDelete);
 }
 
 async function refreshPortalState() {
@@ -199,6 +203,7 @@ function populateTherapistForm(therapist) {
   portalElements.fields.title.value = normalized.title;
   portalElements.fields.location.value = normalized.location;
   portalElements.fields.image.value = normalized.image === "data/portraits/portrait.svg" ? "" : normalized.image;
+  portalElements.imageUpload.value = "";
   portalElements.fields.price.value = normalized.price == null ? "" : String(normalized.price);
   portalElements.fields.availability.value = normalized.availability;
   portalElements.fields.summary.value = normalized.summary;
@@ -206,6 +211,7 @@ function populateTherapistForm(therapist) {
   portalElements.fields.languages.value = normalized.languages.join(", ");
   portalElements.fields.therapyTypes.value = normalized.therapyTypes.join(", ");
   portalElements.fields.email.readOnly = !portalIsAdmin();
+  updateProfileImageDeleteState();
 }
 
 function showBlankTherapistForm() {
@@ -235,12 +241,122 @@ function readTherapistForm() {
   };
 }
 
+function hasCustomProfileImage() {
+  const imageValue = portalElements.fields.image.value.trim();
+  return Boolean(imageValue && imageValue !== window.therapistDataApi.EMPTY_THERAPIST.image);
+}
+
+function updateProfileImageDeleteState() {
+  const hasUpload = Boolean(portalElements.imageUpload.files && portalElements.imageUpload.files.length);
+  portalElements.deleteProfileImage.classList.toggle("hidden", !(hasUpload || hasCustomProfileImage()));
+}
+
+function loadImageElement(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Could not load that image file."));
+    image.src = src;
+  });
+}
+
+async function optimizeImageFile(file) {
+  const fileDataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => reject(new Error("Could not read that image file."));
+    reader.readAsDataURL(file);
+  });
+
+  const image = await loadImageElement(fileDataUrl);
+  const maxDimension = 1200;
+  const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth || 1, image.naturalHeight || 1));
+  const width = Math.max(1, Math.round((image.naturalWidth || 1) * scale));
+  const height = Math.max(1, Math.round((image.naturalHeight || 1) * scale));
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    throw new Error("Image processing is not supported in this browser.");
+  }
+
+  canvas.width = width;
+  canvas.height = height;
+  context.drawImage(image, 0, 0, width, height);
+
+  const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const quality = mimeType === "image/jpeg" ? 0.78 : undefined;
+  const optimizedDataUrl = canvas.toDataURL(mimeType, quality);
+
+  return {
+    dataUrl: optimizedDataUrl,
+    width,
+    height,
+    mimeType
+  };
+}
+
+function handleImageSelectionChange(event) {
+  const [file] = event.target.files || [];
+  if (!file) {
+    updateProfileImageDeleteState();
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    portalElements.editorStatus.textContent = "Please choose an image file.";
+    event.target.value = "";
+    updateProfileImageDeleteState();
+    return;
+  }
+
+  portalElements.editorStatus.textContent = "Optimizing image...";
+  optimizeImageFile(file)
+    .then((optimized) => {
+      portalElements.fields.image.value = optimized.dataUrl;
+      updateProfileImageDeleteState();
+      portalElements.editorStatus.textContent = `Image is ready. ${file.name} optimized to ${optimized.width}x${optimized.height}. Save the profile to store it in the database.`;
+    })
+    .catch(() => {
+      event.target.value = "";
+      updateProfileImageDeleteState();
+      portalElements.editorStatus.textContent = "Could not process that image file. Please try another one.";
+    });
+}
+
+function handleProfileImageDelete() {
+  if (!portalCanEdit()) {
+    portalElements.editorStatus.textContent = "You do not have permission to edit profile images.";
+    return;
+  }
+
+  const hasUpload = Boolean(portalElements.imageUpload.files && portalElements.imageUpload.files.length);
+  if (!hasUpload && !hasCustomProfileImage()) {
+    portalElements.editorStatus.textContent = "There is no profile image to remove.";
+    updateProfileImageDeleteState();
+    return;
+  }
+
+  portalElements.imageUpload.value = "";
+  portalElements.fields.image.value = "";
+  updateProfileImageDeleteState();
+  portalElements.editorStatus.textContent = "Profile image removed. Save the profile to restore the default portrait.";
+}
+
 async function handlePortalLogin(event) {
   event.preventDefault();
+  const normalizedEmail = window.therapistDataApi.normalizeStaffEmail(portalElements.portalEmail.value);
+
+  if (!window.therapistDataApi.isAllowedStaffEmail(normalizedEmail)) {
+    portalElements.authCopy.textContent = `Only @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email addresses can sign in.`;
+    portalElements.portalEmail.focus();
+    return;
+  }
+
   portalElements.authCopy.textContent = "Signing in...";
 
   const result = await window.therapistDataApi.loginWithPassword(
-    portalElements.portalEmail.value,
+    normalizedEmail,
     portalElements.portalPassword.value
   );
 
@@ -280,6 +396,11 @@ async function handleProfileSave(event) {
   }
 
   const formData = readTherapistForm();
+  if (formData.therapist.email && !window.therapistDataApi.isAllowedStaffEmail(formData.therapist.email)) {
+    portalElements.editorStatus.textContent = `Only @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email addresses are allowed for therapist/admin logins.`;
+    portalElements.fields.email.focus();
+    return;
+  }
   portalElements.editorStatus.textContent = "Saving profile...";
   const result = await window.therapistDataApi.saveTherapistProfile(formData.therapist, formData.password);
 

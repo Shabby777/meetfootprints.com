@@ -2,6 +2,7 @@
   const supabaseRuntime = window.footprintsSupabase || {};
   const client = supabaseRuntime.client || null;
   const SESSION_STORAGE_KEY = "footprints-staff-session-token";
+  const STAFF_EMAIL_DOMAIN = "footprintstofeelbetter.com";
   const EMPTY_THERAPIST = {
     id: "",
     email: "",
@@ -95,6 +96,18 @@
     return window.localStorage.getItem(SESSION_STORAGE_KEY) || "";
   }
 
+  function normalizeStaffEmail(email) {
+    return String(email || "").trim().toLowerCase();
+  }
+
+  function isAllowedStaffEmail(email) {
+    return normalizeStaffEmail(email).endsWith(`@${STAFF_EMAIL_DOMAIN}`);
+  }
+
+  function createInvalidStaffEmailError() {
+    return new Error(`Only @${STAFF_EMAIL_DOMAIN} email addresses are allowed.`);
+  }
+
   function setStoredSessionToken(token) {
     if (!token) {
       window.localStorage.removeItem(SESSION_STORAGE_KEY);
@@ -168,9 +181,17 @@
       };
     }
 
+    const normalizedEmail = normalizeStaffEmail(email);
+    if (!isAllowedStaffEmail(normalizedEmail)) {
+      return {
+        data: null,
+        error: createInvalidStaffEmailError()
+      };
+    }
+
     const result = await client
       .rpc("footprints_create_staff_session", {
-        p_email: String(email || "").trim().toLowerCase(),
+        p_email: normalizedEmail,
         p_password: String(password || "")
       })
       .single();
@@ -242,6 +263,12 @@
     }
 
     const normalized = normalizeTherapist(therapist);
+    if (normalized.email && !isAllowedStaffEmail(normalized.email)) {
+      return {
+        data: null,
+        error: createInvalidStaffEmailError()
+      };
+    }
     const explicitId = therapist && typeof therapist.id === "string" ? therapist.id.trim() : "";
     const result = await client
       .rpc("footprints_save_therapist_profile", {
@@ -293,6 +320,9 @@
 
   window.therapistDataApi = {
     EMPTY_THERAPIST,
+    STAFF_EMAIL_DOMAIN,
+    isAllowedStaffEmail,
+    normalizeStaffEmail,
     slugify,
     normalizeTherapist,
     loadTherapists,

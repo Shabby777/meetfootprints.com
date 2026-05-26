@@ -43,6 +43,10 @@ create table if not exists public.staff_sessions (
 
 alter table public.staff_users add column if not exists password_hash text;
 alter table public.staff_users add column if not exists password_updated_at timestamptz;
+alter table public.staff_users drop constraint if exists staff_users_email_domain_check;
+alter table public.staff_users
+  add constraint staff_users_email_domain_check
+  check (lower(trim(email)) like '%@footprintstofeelbetter.com');
 
 create or replace function public.footprints_set_updated_at()
 returns trigger
@@ -152,6 +156,10 @@ declare
 begin
   delete from public.staff_sessions as s
   where s.expires_at <= now();
+
+  if lower(trim(coalesce(p_email, ''))) not like '%@footprintstofeelbetter.com' then
+    raise exception 'Only @footprintstofeelbetter.com email addresses are allowed';
+  end if;
 
   select *
   into v_user
@@ -361,6 +369,10 @@ begin
   end if;
 
   if v_email is not null then
+    if v_email not like '%@footprintstofeelbetter.com' then
+      raise exception 'Only @footprintstofeelbetter.com email addresses are allowed';
+    end if;
+
     select *
     into v_existing_staff_user
     from public.staff_users
