@@ -1,4 +1,5 @@
 const portalElements = {
+  hero: document.querySelector("#portal-hero"),
   refreshButton: document.querySelector("#portal-refresh"),
   signoutButton: document.querySelector("#portal-signout"),
   loginForm: document.querySelector("#portal-login-form"),
@@ -136,6 +137,7 @@ function renderPortal() {
     : null;
 
   portalElements.authStatusBadge.textContent = isSignedIn ? "Signed in" : "Signed out";
+  portalElements.hero.classList.toggle("hidden", !isSignedIn);
   portalElements.authGrid.classList.toggle("portal-grid-auth-signed-in", isSignedIn);
   portalElements.signoutButton.classList.toggle("hidden", !isSignedIn);
   portalElements.accountCard.classList.toggle("hidden", !isSignedIn);
