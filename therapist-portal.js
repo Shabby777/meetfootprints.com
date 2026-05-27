@@ -10,6 +10,9 @@ const portalElements = {
   accountEmail: document.querySelector("#portal-account-email"),
   accountRole: document.querySelector("#portal-account-role"),
   accountTherapist: document.querySelector("#portal-account-therapist"),
+  authGrid: document.querySelector(".portal-grid-auth"),
+  editorSection: document.querySelector("#portal-editor-section"),
+  editorCard: document.querySelector("#portal-editor-card"),
   editorForm: document.querySelector("#therapist-editor-form"),
   editorHeading: document.querySelector("#editor-heading"),
   editorModeBadge: document.querySelector("#editor-mode-badge"),
@@ -44,7 +47,8 @@ const portalState = {
   access: null,
   therapists: [],
   selectedTherapistId: null,
-  adminSearchTerm: ""
+  adminSearchTerm: "",
+  isLoadingPortalData: false
 };
 
 function portalIsAdmin() {
@@ -53,6 +57,20 @@ function portalIsAdmin() {
 
 function portalCanEdit() {
   return Boolean(portalState.access && (portalState.access.role === "admin" || portalState.access.role === "therapist"));
+}
+
+function setEditorDisabled(isDisabled) {
+  if (!portalElements.editorForm) {
+    return;
+  }
+
+  Array.from(portalElements.editorForm.elements).forEach((field) => {
+    if (!(field instanceof HTMLElement) || field.type === "hidden") {
+      return;
+    }
+
+    field.disabled = isDisabled;
+  });
 }
 
 async function initTherapistPortal() {
@@ -82,19 +100,28 @@ async function refreshPortalState() {
   const { session, access, error } = await window.therapistDataApi.getCurrentUserAccess();
   portalState.session = session;
   portalState.access = access;
-
-  if (access) {
-    const portalResult = await window.therapistDataApi.loadPortalTherapists();
-    portalState.therapists = portalResult.error ? [] : portalResult.data;
-    if (portalResult.error) {
-      portalElements.authCopy.textContent = `Access lookup failed: ${portalResult.error.message}`;
-    }
-  } else {
-    portalState.therapists = [];
-  }
+  portalState.isLoadingPortalData = false;
 
   if (error) {
     portalElements.authCopy.textContent = `Session lookup failed: ${error.message}`;
+  }
+
+  if (!access) {
+    portalState.therapists = [];
+    renderPortal();
+    return;
+  }
+
+  portalState.therapists = [];
+  portalState.isLoadingPortalData = true;
+  renderPortal();
+
+  const portalResult = await window.therapistDataApi.loadPortalTherapists();
+  portalState.isLoadingPortalData = false;
+  portalState.therapists = portalResult.error ? [] : portalResult.data;
+
+  if (portalResult.error) {
+    portalElements.authCopy.textContent = `Access lookup failed: ${portalResult.error.message}`;
   }
 
   renderPortal();
@@ -103,18 +130,23 @@ async function refreshPortalState() {
 function renderPortal() {
   const isSignedIn = Boolean(portalState.session && portalState.access);
   const access = portalState.access;
+  const isLoadingPortalData = portalState.isLoadingPortalData;
   const linkedTherapist = access && access.therapist_id
     ? portalState.therapists.find((therapist) => therapist.id === access.therapist_id)
     : null;
 
   portalElements.authStatusBadge.textContent = isSignedIn ? "Signed in" : "Signed out";
+  portalElements.authGrid.classList.toggle("portal-grid-auth-signed-in", isSignedIn);
   portalElements.signoutButton.classList.toggle("hidden", !isSignedIn);
   portalElements.accountCard.classList.toggle("hidden", !isSignedIn);
+  portalElements.editorSection.classList.toggle("hidden", !portalCanEdit());
+  portalElements.editorCard.classList.toggle("hidden", !portalCanEdit());
   portalElements.editorForm.classList.toggle("hidden", !portalCanEdit());
   portalElements.adminPanel.classList.toggle("hidden", !portalIsAdmin());
   portalElements.createNewTherapist.classList.toggle("hidden", !portalIsAdmin());
   portalElements.deleteTherapist.classList.toggle("hidden", !portalIsAdmin());
   portalElements.editorModeBadge.classList.toggle("hidden", !portalCanEdit());
+  setEditorDisabled(!portalCanEdit() || isLoadingPortalData);
 
   if (!isSignedIn) {
     portalElements.authCopy.textContent = "Use the email and password or PIN linked to your therapist or admin account.";
@@ -126,8 +158,19 @@ function renderPortal() {
 
   portalElements.accountEmail.textContent = access.email || "-";
   portalElements.accountRole.textContent = access.role || "-";
-  portalElements.accountTherapist.textContent = linkedTherapist ? linkedTherapist.name : "Not linked";
+  portalElements.accountTherapist.textContent = isLoadingPortalData
+    ? "Loading..."
+    : (linkedTherapist ? linkedTherapist.name : "Not linked");
   portalElements.editorModeBadge.textContent = portalIsAdmin() ? "Admin access" : "Therapist access";
+
+  if (isLoadingPortalData) {
+    populateTherapistForm(window.therapistDataApi.EMPTY_THERAPIST);
+    portalElements.editorHeading.textContent = portalIsAdmin() ? "Loading therapist profiles" : "Loading therapist profile";
+    portalElements.editorStatus.textContent = portalIsAdmin()
+      ? "Signed in successfully. Loading therapist profiles..."
+      : "Signed in successfully. Loading your profile...";
+    return;
+  }
 
   if (portalIsAdmin()) {
     renderAdminList();

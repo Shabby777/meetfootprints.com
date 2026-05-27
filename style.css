@@ -476,6 +476,16 @@ a {
   margin-top: 20px;
 }
 
+.portal-grid-auth {
+  grid-template-columns: minmax(0, 610px);
+  justify-content: center;
+}
+
+.portal-grid-auth.portal-grid-auth-signed-in {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+}
+
 .portal-grid-wide {
   align-items: start;
 }
@@ -518,7 +528,7 @@ a {
   display: grid;
   gap: 14px;
   margin-top: 20px;
-  max-height: 720px;
+  max-height: 941px;
   overflow: auto;
 }
 
@@ -542,14 +552,63 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .portal-grid-auth,
+  .portal-grid-auth.portal-grid-auth-signed-in {
+    grid-template-columns: minmax(0, 100%);
+  }
+
   .portal-hero {
     flex-direction: column;
     align-items: flex-start;
   }
 
+  .portal-actions {
+    width: 100%;
+  }
+
   .portal-account-grid,
   .portal-fields-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-shell {
+    width: min(calc(100% - 16px), 1240px);
+    padding: 20px 0 36px;
+  }
+
+  .portal-hero,
+  .portal-card {
+    border-radius: 22px;
+  }
+
+  .portal-hero,
+  .portal-card {
+    padding: 20px;
+  }
+
+  .portal-card-header,
+  .portal-list-item,
+  .portal-form-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .portal-status,
+  .portal-actions,
+  .portal-form-actions,
+  .portal-list-actions,
+  .portal-form-actions .primary-button,
+  .portal-form-actions .secondary-button,
+  .portal-actions .secondary-button,
+  .portal-list-actions .secondary-button,
+  .portal-card .primary-button {
+    width: 100%;
+  }
+
+  .portal-status {
+    justify-content: center;
   }
 }
 
