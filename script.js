@@ -1,5 +1,6 @@
 const FILTER_KEYS = ["state", "specialties", "languages", "therapyTypes", "availability"];
 const PAGE_SIZE = 3;
+const DEFAULT_THERAPIST_IMAGE = "data/portraits/portrait.svg";
 const menuToggle = document.querySelector("#menu-toggle");
 const mobileMenu = document.querySelector("#mobile-menu");
 const footerYear = document.querySelector("#home-year");
@@ -631,6 +632,7 @@ function render(resetPage = false) {
 
   updateUrlFromState();
   renderCardsSafe(paginatedTherapists);
+  hydrateVisibleTherapistImages(paginatedTherapists);
   renderResultsCount(state.filteredTherapists.length, state.displayedTherapists.length, state.showingRecommendations);
   renderActiveFilters();
   renderPagination(totalPages);
@@ -795,9 +797,10 @@ function renderCardsSafe(therapists) {
 
     const cardImage = document.createElement("img");
     cardImage.className = "card-image";
-    cardImage.src = therapist.image || "data/portraits/portrait.svg";
+    cardImage.src = resolveTherapistImage(therapist);
     cardImage.alt = therapist.name;
     cardImage.loading = "lazy";
+    cardImage.dataset.therapistId = therapist.id;
     imageWrap.appendChild(cardImage);
 
     const cardBody = document.createElement("div");
@@ -864,6 +867,50 @@ function renderCardsSafe(therapists) {
   });
 
   elements.cardsGrid.replaceChildren(fragment);
+}
+
+function resolveTherapistImage(therapist) {
+  const image = String((therapist && therapist.image) || "").trim();
+  return image || DEFAULT_THERAPIST_IMAGE;
+}
+
+function hasDefaultTherapistImage(therapist) {
+  return resolveTherapistImage(therapist) === DEFAULT_THERAPIST_IMAGE;
+}
+
+async function hydrateVisibleTherapistImages(therapists) {
+  const therapistsNeedingImages = therapists.filter((therapist) => therapist.id && hasDefaultTherapistImage(therapist));
+
+  if (!therapistsNeedingImages.length || !window.therapistDataApi) {
+    return;
+  }
+
+  const updatedTherapists = await Promise.all(
+    therapistsNeedingImages.map((therapist) => window.therapistDataApi.loadTherapistById(therapist.id, {
+      fallbackUrl: "data/therapists.json",
+      fallbackData: fallbackTherapists
+    }).catch(() => null))
+  );
+
+  updatedTherapists.forEach((updatedTherapist) => {
+    if (!updatedTherapist || hasDefaultTherapistImage(updatedTherapist)) {
+      return;
+    }
+
+    const visibleImage = Array.from(elements.cardsGrid.querySelectorAll(".card-image"))
+      .find((image) => image.dataset.therapistId === updatedTherapist.id);
+    if (visibleImage) {
+      visibleImage.src = resolveTherapistImage(updatedTherapist);
+      visibleImage.alt = updatedTherapist.name || visibleImage.alt;
+    }
+
+    [state.therapists, state.filteredTherapists, state.displayedTherapists].forEach((collection) => {
+      const existingTherapist = collection.find((therapist) => therapist.id === updatedTherapist.id);
+      if (existingTherapist) {
+        existingTherapist.image = updatedTherapist.image;
+      }
+    });
+  });
 }
 
 function paginateTherapists(therapists, currentPage) {
