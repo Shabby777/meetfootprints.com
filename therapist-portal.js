@@ -49,7 +49,9 @@ const portalState = {
   therapists: [],
   selectedTherapistId: null,
   adminSearchTerm: "",
-  isLoadingPortalData: false
+  isLoadingPortalData: false,
+  isOptimizingImage: false,
+  imageSelectionRunId: 0
 };
 
 function portalIsAdmin() {
@@ -97,7 +99,8 @@ function attachPortalEventListeners() {
   portalElements.deleteProfileImage.addEventListener("click", handleProfileImageDelete);
 }
 
-async function refreshPortalState() {
+async function refreshPortalState(options) {
+  const settings = options || {};
   const { session, access, error } = await window.therapistDataApi.getCurrentUserAccess();
   portalState.session = session;
   portalState.access = access;
@@ -113,9 +116,13 @@ async function refreshPortalState() {
     return;
   }
 
-  portalState.therapists = [];
+  if (!settings.preserveCurrentTherapists) {
+    portalState.therapists = [];
+  }
   portalState.isLoadingPortalData = true;
-  renderPortal();
+  if (!settings.preserveCurrentTherapists) {
+    renderPortal();
+  }
 
   const portalResult = await window.therapistDataApi.loadPortalTherapists();
   portalState.isLoadingPortalData = false;
@@ -342,27 +349,41 @@ async function optimizeImageFile(file) {
 }
 
 function handleImageSelectionChange(event) {
+  const currentRunId = ++portalState.imageSelectionRunId;
   const [file] = event.target.files || [];
   if (!file) {
+    portalState.isOptimizingImage = false;
     updateProfileImageDeleteState();
     return;
   }
 
   if (!file.type.startsWith("image/")) {
+    portalState.isOptimizingImage = false;
     portalElements.editorStatus.textContent = "Please choose an image file.";
     event.target.value = "";
     updateProfileImageDeleteState();
     return;
   }
 
+  portalState.isOptimizingImage = true;
   portalElements.editorStatus.textContent = "Optimizing image...";
   optimizeImageFile(file)
     .then((optimized) => {
+      if (currentRunId !== portalState.imageSelectionRunId) {
+        return;
+      }
+
+      portalState.isOptimizingImage = false;
       portalElements.fields.image.value = optimized.dataUrl;
       updateProfileImageDeleteState();
       portalElements.editorStatus.textContent = `Image is ready. ${file.name} optimized to ${optimized.width}x${optimized.height}. Save the profile to store it in the database.`;
     })
     .catch(() => {
+      if (currentRunId !== portalState.imageSelectionRunId) {
+        return;
+      }
+
+      portalState.isOptimizingImage = false;
       event.target.value = "";
       updateProfileImageDeleteState();
       portalElements.editorStatus.textContent = "Could not process that image file. Please try another one.";
@@ -384,6 +405,8 @@ function handleProfileImageDelete() {
 
   portalElements.imageUpload.value = "";
   portalElements.fields.image.value = "";
+  portalState.isOptimizingImage = false;
+  portalState.imageSelectionRunId += 1;
   updateProfileImageDeleteState();
   portalElements.editorStatus.textContent = "Profile image removed. Save the profile to restore the default portrait.";
 }
@@ -440,6 +463,11 @@ async function handleProfileSave(event) {
     return;
   }
 
+  if (portalState.isOptimizingImage) {
+    portalElements.editorStatus.textContent = "Please wait for the selected image to finish processing before saving.";
+    return;
+  }
+
   const formData = readTherapistForm();
   if (formData.therapist.email && !window.therapistDataApi.isAllowedStaffEmail(formData.therapist.email)) {
     portalElements.editorStatus.textContent = `Only @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email addresses are allowed for therapist/admin logins.`;
@@ -455,8 +483,23 @@ async function handleProfileSave(event) {
   }
 
   portalState.selectedTherapistId = result.data.id;
+  mergeSavedTherapist(result.data);
+  populateTherapistForm(result.data);
   portalElements.editorStatus.textContent = "Profile saved successfully.";
-  await refreshPortalState();
+  await refreshPortalState({ preserveCurrentTherapists: true });
+}
+
+function mergeSavedTherapist(savedTherapist) {
+  if (!savedTherapist || !savedTherapist.id) {
+    return;
+  }
+
+  const existingIndex = portalState.therapists.findIndex((therapist) => therapist.id === savedTherapist.id);
+  if (existingIndex >= 0) {
+    portalState.therapists[existingIndex] = savedTherapist;
+  } else {
+    portalState.therapists.push(savedTherapist);
+  }
 }
 
 async function handleProfileDelete() {
