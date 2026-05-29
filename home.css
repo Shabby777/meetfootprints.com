@@ -1137,7 +1137,7 @@ select {
 .home-footer {
   padding: 24px 0 40px;
   background: linear-gradient(180deg, rgba(108, 8, 63, 0.04), rgba(255, 247, 250, 0.88));
-  border-top: 1px solid rgba(155, 27, 89, 0.08);
+  border-top: 2px solid rgb(155 27 89 / 68%);
 }
 
 .home-footer-grid {
