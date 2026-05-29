@@ -1239,18 +1239,18 @@ select {
   .landing-hero-media {
     position: relative;
     width: 100%;
-    height: clamp(300px, 62vw, 500px);
+    height: auto;
+    aspect-ratio: 4 / 5;
     overflow: hidden;
   }
 
   .landing-hero-media::before {
-    background:
-      linear-gradient(180deg, rgba(255, 242, 247, 0) 48%, #fff2f7 100%),
-      linear-gradient(90deg, rgba(255, 242, 247, 0.54), rgba(255, 242, 247, 0.04) 48%);
+    display: none;
   }
 
   .landing-hero-media img {
-    object-position: 78% center;
+    content: url("mobile-hero-img.png");
+    object-position: center top;
   }
 
   .landing-hero-inner {
@@ -1355,7 +1355,7 @@ select {
   }
 
   .landing-hero-media {
-    height: clamp(260px, 76vw, 390px);
+    aspect-ratio: 4 / 5;
   }
 
   .landing-hero-inner {
