@@ -40,8 +40,12 @@ const profileElements = {
   editLink: document.querySelector("#profile-edit-link")
 };
 
+let currentProfileTherapistId = "";
+
 async function initTherapistProfile() {
   const therapistId = new URLSearchParams(window.location.search).get("therapist");
+  currentProfileTherapistId = therapistId || "";
+  initTherapistProfileUpdateListener();
   const therapist = await window.therapistDataApi.loadTherapistById(therapistId, {
     fallbackUrl: "data/therapists.json",
     fallbackData: profileFallbackTherapists
@@ -87,7 +91,7 @@ function renderTherapistProfile(therapist) {
   profileElements.heroPrice.textContent = formatPrice(STANDARD_SESSION_RATE);
   profileElements.heroAvailability.textContent = therapist.availability;
 
-  profileElements.profileImage.src = therapist.image || "data/portraits/portrait.svg";
+  profileElements.profileImage.src = resolveProfileImage(therapist);
   profileElements.profileImage.alt = therapist.name;
   profileElements.sidebarName.textContent = therapist.name;
   profileElements.sidebarRole.textContent = buildSidebarRole(therapist);
@@ -108,6 +112,44 @@ function buildRoleLine(therapist) {
 function buildSidebarRole(therapist) {
   const languageText = therapist.languages.length ? therapist.languages.join(", ") : "Language details coming soon";
   return [therapist.title, languageText].filter(Boolean).join(" | ");
+}
+
+function initTherapistProfileUpdateListener() {
+  window.addEventListener("footprints:therapist-updated", handleProfileTherapistUpdateEvent);
+  window.addEventListener("storage", (event) => {
+    if (event.key !== window.therapistDataApi.THERAPIST_UPDATE_STORAGE_KEY) {
+      return;
+    }
+
+    handleProfileTherapistUpdateEvent(event);
+  });
+}
+
+function handleProfileTherapistUpdateEvent(event) {
+  const updatedTherapist = window.therapistDataApi.parseTherapistUpdateEvent(event);
+  if (!updatedTherapist || updatedTherapist.id !== currentProfileTherapistId) {
+    return;
+  }
+
+  renderTherapistProfile(updatedTherapist);
+}
+
+function resolveProfileImage(therapist) {
+  const fallbackImage = "data/portraits/portrait.svg";
+  const image = String((therapist && therapist.image) || "").trim() || fallbackImage;
+  const version = String((therapist && therapist.updatedAt) || "").trim();
+
+  if (!version || image === fallbackImage || image.startsWith("data:") || image.startsWith("blob:")) {
+    return image;
+  }
+
+  try {
+    const url = new URL(image, window.location.href);
+    url.searchParams.set("v", version);
+    return url.toString();
+  } catch (error) {
+    return image;
+  }
 }
 
 function renderChipGroup(container, items, fallbackText) {

@@ -2,6 +2,7 @@
   const supabaseRuntime = window.footprintsSupabase || {};
   const client = supabaseRuntime.client || null;
   const SESSION_STORAGE_KEY = "footprints-staff-session-token";
+  const THERAPIST_UPDATE_STORAGE_KEY = "footprints-therapist-profile-updated";
   const STAFF_EMAIL_DOMAIN = "footprintstofeelbetter.com";
   const EMPTY_THERAPIST = {
     id: "",
@@ -16,7 +17,8 @@
     price: null,
     availability: "Available",
     summary: "",
-    calLink: ""
+    calLink: "",
+    updatedAt: ""
   };
 
   function slugify(value) {
@@ -59,7 +61,8 @@
       price: next.price === "" || next.price == null || Number.isNaN(Number(next.price)) ? null : Number(next.price),
       availability: String(next.availability || base.availability).trim() || base.availability,
       summary: String(next.summary || "").trim(),
-      calLink: String(next.calLink || next.cal_link || next.calUrl || next.cal_url || next.calBookingUrl || "").trim()
+      calLink: String(next.calLink || next.cal_link || next.calUrl || next.cal_url || next.calBookingUrl || "").trim(),
+      updatedAt: String(next.updatedAt || next.updated_at || "").trim()
     };
   }
 
@@ -68,6 +71,85 @@
       ...record,
       therapyTypes: record.therapy_types
     });
+  }
+
+  function getTherapistUpdateKey(therapistId) {
+    return `${THERAPIST_UPDATE_STORAGE_KEY}:${therapistId}`;
+  }
+
+  function cacheUpdatedTherapist(therapist) {
+    const savedAt = new Date().toISOString();
+    const normalized = normalizeTherapist(therapist);
+    if (!normalized.id) {
+      return normalized;
+    }
+
+    if (!normalized.updatedAt) {
+      normalized.updatedAt = savedAt;
+    }
+
+    const payload = {
+      therapist: normalized,
+      savedAt
+    };
+    const serializedPayload = JSON.stringify(payload);
+
+    try {
+      window.localStorage.setItem(getTherapistUpdateKey(normalized.id), serializedPayload);
+      window.localStorage.setItem(THERAPIST_UPDATE_STORAGE_KEY, serializedPayload);
+    } catch (error) {
+      // Ignore storage quota/privacy failures; Supabase remains the source of truth.
+    }
+
+    window.dispatchEvent(new CustomEvent("footprints:therapist-updated", {
+      detail: payload
+    }));
+
+    return normalized;
+  }
+
+  function getCachedUpdatedTherapist(therapistId) {
+    if (!therapistId) {
+      return null;
+    }
+
+    try {
+      const rawPayload = window.localStorage.getItem(getTherapistUpdateKey(therapistId));
+      if (!rawPayload) {
+        return null;
+      }
+
+      const payload = JSON.parse(rawPayload);
+      return payload && payload.therapist ? normalizeTherapist(payload.therapist) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function parseTherapistUpdateEvent(event) {
+    try {
+      const payload = event && event.detail
+        ? event.detail
+        : JSON.parse(event && event.newValue ? event.newValue : "null");
+      const therapist = payload && payload.therapist ? normalizeTherapist(payload.therapist) : null;
+      return therapist && therapist.id ? therapist : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function getMostRecentTherapist(primaryTherapist, fallbackTherapist) {
+    if (!primaryTherapist) {
+      return fallbackTherapist || null;
+    }
+
+    if (!fallbackTherapist) {
+      return primaryTherapist;
+    }
+
+    const primaryTime = Date.parse(primaryTherapist.updatedAt || "") || 0;
+    const fallbackTime = Date.parse(fallbackTherapist.updatedAt || "") || 0;
+    return fallbackTime > primaryTime ? fallbackTherapist : primaryTherapist;
   }
 
   async function fetchJsonFallback(fallbackUrl, fallbackData) {
@@ -122,9 +204,12 @@
   async function loadTherapists(options) {
     const settings = options || {};
     if (client) {
+      const selectColumns = settings.includeImages === false
+        ? "id, name, title, location, specialties, languages, therapy_types, price, availability, summary, is_active, updated_at"
+        : "id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active, updated_at";
       const result = await client
         .from("therapists")
-        .select("id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active")
+        .select(selectColumns)
         .eq("is_active", true)
         .order("name", { ascending: true });
 
@@ -172,12 +257,14 @@
     if (client) {
       const result = await client
         .from("therapists")
-        .select("id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active")
+        .select("id, name, image, title, location, specialties, languages, therapy_types, price, availability, summary, is_active, updated_at")
         .eq("id", therapistId)
         .maybeSingle();
 
       if (!result.error && result.data && result.data.is_active) {
-        return mapDbTherapist(result.data);
+        const dbTherapist = mapDbTherapist(result.data);
+        cacheUpdatedTherapist(dbTherapist);
+        return dbTherapist;
       }
 
       if (result.error) {
@@ -186,7 +273,8 @@
     }
 
     const therapists = await loadTherapists(options);
-    return therapists.find((therapist) => therapist.id === therapistId) || null;
+    const fallbackTherapist = therapists.find((therapist) => therapist.id === therapistId) || null;
+    return getMostRecentTherapist(fallbackTherapist, getCachedUpdatedTherapist(therapistId));
   }
 
   async function loginWithPassword(email, password) {
@@ -311,7 +399,7 @@
       return result;
     }
 
-    return { data: mapDbTherapist(result.data), error: null };
+    return { data: cacheUpdatedTherapist(mapDbTherapist(result.data)), error: null };
   }
 
   async function deleteTherapistProfile(therapistId) {
@@ -337,10 +425,15 @@
   window.therapistDataApi = {
     EMPTY_THERAPIST,
     STAFF_EMAIL_DOMAIN,
+    THERAPIST_UPDATE_STORAGE_KEY,
     isAllowedStaffEmail,
     normalizeStaffEmail,
     slugify,
     normalizeTherapist,
+    cacheUpdatedTherapist,
+    getCachedUpdatedTherapist,
+    parseTherapistUpdateEvent,
+    getMostRecentTherapist,
     loadTherapists,
     loadPortalTherapists,
     loadTherapistById,

@@ -206,6 +206,7 @@ begin
 end;
 $$;
 
+drop function if exists public.footprints_list_portal_therapists(text);
 create or replace function public.footprints_list_portal_therapists(p_token text)
 returns table (
   id text,
@@ -220,7 +221,8 @@ returns table (
   price numeric,
   availability text,
   summary text,
-  is_active boolean
+  is_active boolean,
+  updated_at timestamptz
 )
 language plpgsql
 security definer
@@ -253,7 +255,8 @@ begin
       t.price,
       t.availability,
       t.summary,
-      t.is_active
+      t.is_active,
+      t.updated_at
     from public.therapists t
     left join public.staff_users su
       on su.therapist_id = t.id
@@ -276,13 +279,15 @@ begin
     t.price,
     t.availability,
     t.summary,
-    t.is_active
+    t.is_active,
+    t.updated_at
   from public.therapists t
   where t.id = v_session.therapist_id
   limit 1;
 end;
 $$;
 
+drop function if exists public.footprints_save_therapist_profile(text, jsonb, text);
 create or replace function public.footprints_save_therapist_profile(
   p_token text,
   p_therapist jsonb,
@@ -301,7 +306,8 @@ returns table (
   price numeric,
   availability text,
   summary text,
-  is_active boolean
+  is_active boolean,
+  updated_at timestamptz
 )
 language plpgsql
 security definer
@@ -512,7 +518,8 @@ begin
     t.price,
     t.availability,
     t.summary,
-    t.is_active
+    t.is_active,
+    t.updated_at
   from public.therapists t
   left join public.staff_users su
     on su.therapist_id = t.id
