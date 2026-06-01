@@ -3,6 +3,7 @@
   const client = supabaseRuntime.client || null;
   const SESSION_STORAGE_KEY = "footprints-staff-session-token";
   const THERAPIST_UPDATE_STORAGE_KEY = "footprints-therapist-profile-updated";
+  const THERAPIST_IMAGE_BUCKET = "therapist-images";
   const STAFF_EMAIL_DOMAIN = "footprintstofeelbetter.com";
   const EMPTY_THERAPIST = {
     id: "",
@@ -180,6 +181,63 @@
     return window.localStorage.getItem(SESSION_STORAGE_KEY) || "";
   }
 
+  function isDataUrl(value) {
+    return String(value || "").startsWith("data:image/");
+  }
+
+  async function dataUrlToBlob(dataUrl) {
+    const response = await fetch(dataUrl);
+    if (!response.ok) {
+      throw new Error("Could not prepare the selected image for upload.");
+    }
+
+    return response.blob();
+  }
+
+  function getImageExtension(mimeType) {
+    if (mimeType === "image/png") {
+      return "png";
+    }
+
+    if (mimeType === "image/webp") {
+      return "webp";
+    }
+
+    return "jpg";
+  }
+
+  function buildTherapistImagePath(therapist, blob) {
+    const therapistKey = slugify(therapist.id || therapist.name) || `therapist-${Date.now()}`;
+    const extension = getImageExtension(blob.type);
+    return `${therapistKey}/profile-${Date.now()}.${extension}`;
+  }
+
+  async function uploadTherapistImageIfNeeded(therapist) {
+    if (!client || !isDataUrl(therapist.image)) {
+      return therapist.image;
+    }
+
+    const blob = await dataUrlToBlob(therapist.image);
+    const path = buildTherapistImagePath(therapist, blob);
+    const uploadResult = await client.storage
+      .from(THERAPIST_IMAGE_BUCKET)
+      .upload(path, blob, {
+        cacheControl: "31536000",
+        contentType: blob.type || "image/jpeg",
+        upsert: true
+      });
+
+    if (uploadResult.error) {
+      throw uploadResult.error;
+    }
+
+    const publicUrlResult = client.storage
+      .from(THERAPIST_IMAGE_BUCKET)
+      .getPublicUrl(path);
+
+    return publicUrlResult.data.publicUrl;
+  }
+
   function normalizeStaffEmail(email) {
     return String(email || "").trim().toLowerCase();
   }
@@ -245,6 +303,36 @@
 
     return {
       data: Array.isArray(result.data) ? result.data.map(mapDbTherapist) : [],
+      error: null
+    };
+  }
+
+  async function loadPortalTherapistById(therapistId) {
+    if (!client) {
+      return {
+        data: null,
+        error: new Error("Supabase is not configured yet. Add your project URL and anon key in supabase-config.js.")
+      };
+    }
+
+    const token = getStoredSessionToken();
+    if (!token) {
+      return { data: null, error: new Error("You must sign in first.") };
+    }
+
+    const result = await client
+      .rpc("footprints_get_portal_therapist", {
+        p_token: token,
+        p_therapist_id: therapistId
+      })
+      .single();
+
+    if (result.error) {
+      return result;
+    }
+
+    return {
+      data: mapDbTherapist(result.data),
       error: null
     };
   }
@@ -374,6 +462,19 @@
       };
     }
     const explicitId = therapist && typeof therapist.id === "string" ? therapist.id.trim() : "";
+    let imageUrl = normalized.image;
+    try {
+      imageUrl = await uploadTherapistImageIfNeeded({
+        ...normalized,
+        id: explicitId || normalized.id
+      });
+    } catch (error) {
+      return {
+        data: null,
+        error: new Error(`Image upload failed: ${error.message || "Please check the therapist-images Storage bucket."}`)
+      };
+    }
+
     const result = await client
       .rpc("footprints_save_therapist_profile", {
         p_token: token,
@@ -381,7 +482,7 @@
           id: explicitId || null,
           email: normalized.email || null,
           name: normalized.name,
-          image: normalized.image,
+          image: imageUrl,
           title: normalized.title,
           location: normalized.location,
           specialties: normalized.specialties,
@@ -426,6 +527,7 @@
     EMPTY_THERAPIST,
     STAFF_EMAIL_DOMAIN,
     THERAPIST_UPDATE_STORAGE_KEY,
+    THERAPIST_IMAGE_BUCKET,
     isAllowedStaffEmail,
     normalizeStaffEmail,
     slugify,
@@ -436,6 +538,7 @@
     getMostRecentTherapist,
     loadTherapists,
     loadPortalTherapists,
+    loadPortalTherapistById,
     loadTherapistById,
     loginWithPassword,
     getCurrentUserAccess,
