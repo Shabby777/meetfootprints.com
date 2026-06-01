@@ -435,6 +435,13 @@ select {
   line-height: 1;
 }
 
+.landing-hero-button-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
 .home-hero {
   padding: 40px 0 52px;
 }
