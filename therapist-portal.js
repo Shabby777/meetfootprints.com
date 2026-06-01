@@ -185,12 +185,13 @@ function renderPortal() {
     renderAdminList();
     const requestedTherapistId = new URLSearchParams(window.location.search).get("therapist");
     const selectedTherapist = portalState.therapists.find((therapist) => therapist.id === (portalState.selectedTherapistId || requestedTherapistId))
-      || portalState.therapists[0]
       || window.therapistDataApi.EMPTY_THERAPIST;
     portalState.selectedTherapistId = selectedTherapist.id || null;
     populateTherapistForm(selectedTherapist);
     portalElements.editorHeading.textContent = selectedTherapist.id ? `Editing ${selectedTherapist.name}` : "Create therapist profile";
-    portalElements.editorStatus.textContent = "Admin access is active. You can add, update, delete, or reset therapist passwords/PINs from this form.";
+    portalElements.editorStatus.textContent = selectedTherapist.id
+      ? "Profile summary loaded. Click Edit in the admin list to load full profile details."
+      : "Admin access is active. Select a therapist to edit, or add a new profile.";
     return;
   }
 
@@ -376,7 +377,7 @@ function handleImageSelectionChange(event) {
       portalState.isOptimizingImage = false;
       portalElements.fields.image.value = optimized.dataUrl;
       updateProfileImageDeleteState();
-      portalElements.editorStatus.textContent = `Image is ready. ${file.name} optimized to ${optimized.width}x${optimized.height}. Save the profile to store it in the database.`;
+      portalElements.editorStatus.textContent = `Image is ready. ${file.name} optimized to ${optimized.width}x${optimized.height}. Save the profile to upload it.`;
     })
     .catch(() => {
       if (currentRunId !== portalState.imageSelectionRunId) {
@@ -532,19 +533,30 @@ async function handleProfileDelete() {
   await refreshPortalState();
 }
 
-function handleAdminListClick(event) {
+async function handleAdminListClick(event) {
   const button = event.target.closest("[data-edit-therapist]");
   if (!button) {
     return;
   }
 
   const therapistId = button.dataset.editTherapist;
-  const therapist = portalState.therapists.find((item) => item.id === therapistId);
-  if (!therapist) {
+  if (!therapistId) {
     return;
   }
 
+  portalElements.editorStatus.textContent = "Loading full therapist profile...";
+  button.disabled = true;
+  const result = await window.therapistDataApi.loadPortalTherapistById(therapistId);
+  button.disabled = false;
+
+  if (result.error) {
+    portalElements.editorStatus.textContent = `Profile load failed: ${result.error.message}`;
+    return;
+  }
+
+  const therapist = result.data;
   portalState.selectedTherapistId = therapist.id;
+  mergeSavedTherapist(therapist);
   populateTherapistForm(therapist);
   portalElements.editorHeading.textContent = `Editing ${therapist.name}`;
   portalElements.editorStatus.textContent = "Profile loaded. To reset this therapist password or PIN, enter a new one in the password field and save. Leave it blank to keep the current one.";
