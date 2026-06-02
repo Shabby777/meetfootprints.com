@@ -50,6 +50,7 @@ const portalState = {
   selectedTherapistId: null,
   adminSearchTerm: "",
   isLoadingPortalData: false,
+  isSavingProfile: false,
   isOptimizingImage: false,
   imageSelectionRunId: 0
 };
@@ -155,7 +156,7 @@ function renderPortal() {
   portalElements.createNewTherapist.classList.toggle("hidden", !portalIsAdmin());
   portalElements.deleteTherapist.classList.toggle("hidden", !portalIsAdmin());
   portalElements.editorModeBadge.classList.toggle("hidden", !portalCanEdit());
-  setEditorDisabled(!portalCanEdit() || isLoadingPortalData);
+  setEditorDisabled(!portalCanEdit() || isLoadingPortalData || portalState.isSavingProfile);
 
   if (!isSignedIn) {
     portalElements.authCopy.textContent = "Use the email and password or PIN linked to your therapist or admin account.";
@@ -274,6 +275,17 @@ function showBlankTherapistForm() {
   portalElements.editorStatus.textContent = "Fill out the fields and save to add a new therapist. Add a password or PIN if this therapist should be able to log in.";
 }
 
+function showSavedTherapistForm(therapist) {
+  portalState.selectedTherapistId = therapist.id;
+  mergeSavedTherapist(therapist);
+  populateTherapistForm(therapist);
+  portalElements.editorHeading.textContent = `Editing ${therapist.name}`;
+
+  if (portalIsAdmin()) {
+    renderAdminList();
+  }
+}
+
 function readTherapistForm() {
   return {
     therapist: {
@@ -292,6 +304,41 @@ function readTherapistForm() {
     },
     password: portalElements.fields.password.value.trim()
   };
+}
+
+function isBlankProfileData(therapist) {
+  return !therapist.name
+    && !therapist.email
+    && !therapist.title
+    && !therapist.location
+    && !therapist.image
+    && !therapist.summary
+    && !therapist.specialties.trim()
+    && !therapist.languages.trim()
+    && !therapist.therapyTypes.trim()
+    && !therapist.price;
+}
+
+function validateTherapistSave(formData) {
+  const therapist = formData.therapist;
+  const existingTherapistId = therapist.id || portalState.selectedTherapistId;
+
+  if (!portalElements.editorForm.reportValidity()) {
+    return false;
+  }
+
+  if (!therapist.name) {
+    portalElements.editorStatus.textContent = "Please enter the therapist full name before saving.";
+    portalElements.fields.name.focus();
+    return false;
+  }
+
+  if (existingTherapistId && isBlankProfileData(therapist)) {
+    portalElements.editorStatus.textContent = "Save blocked because this profile form is empty. Reload the therapist profile before saving.";
+    return false;
+  }
+
+  return true;
 }
 
 function hasCustomProfileImage() {
@@ -459,6 +506,11 @@ function handlePortalRefresh() {
 async function handleProfileSave(event) {
   event.preventDefault();
 
+  if (portalState.isSavingProfile) {
+    portalElements.editorStatus.textContent = "Save already in progress. Please wait a moment.";
+    return;
+  }
+
   if (!portalCanEdit()) {
     portalElements.editorStatus.textContent = "You do not have permission to save profiles.";
     return;
@@ -470,24 +522,40 @@ async function handleProfileSave(event) {
   }
 
   const formData = readTherapistForm();
+  if (!validateTherapistSave(formData)) {
+    return;
+  }
+
   if (formData.therapist.email && !window.therapistDataApi.isAllowedStaffEmail(formData.therapist.email)) {
     portalElements.editorStatus.textContent = `Only @${window.therapistDataApi.STAFF_EMAIL_DOMAIN} email addresses are allowed for therapist/admin logins.`;
     portalElements.fields.email.focus();
     return;
   }
+
+  portalState.isSavingProfile = true;
+  setEditorDisabled(true);
   portalElements.editorStatus.textContent = "Saving profile...";
-  const result = await window.therapistDataApi.saveTherapistProfile(formData.therapist, formData.password);
+  let finalStatusMessage = "";
+  try {
+    const result = await window.therapistDataApi.saveTherapistProfile(formData.therapist, formData.password);
 
-  if (result.error) {
-    portalElements.editorStatus.textContent = `Save failed: ${result.error.message}`;
-    return;
+    if (result.error) {
+      finalStatusMessage = `Save failed: ${result.error.message}`;
+      return;
+    }
+
+    showSavedTherapistForm(result.data);
+    finalStatusMessage = "Profile saved successfully.";
+    portalElements.editorStatus.textContent = finalStatusMessage;
+  } catch (error) {
+    finalStatusMessage = `Save failed: ${error.message || "Please try again."}`;
+  } finally {
+    portalState.isSavingProfile = false;
+    setEditorDisabled(!portalCanEdit());
+    if (finalStatusMessage) {
+      portalElements.editorStatus.textContent = finalStatusMessage;
+    }
   }
-
-  portalState.selectedTherapistId = result.data.id;
-  mergeSavedTherapist(result.data);
-  populateTherapistForm(result.data);
-  portalElements.editorStatus.textContent = "Profile saved successfully.";
-  await refreshPortalState({ preserveCurrentTherapists: true });
 }
 
 function mergeSavedTherapist(savedTherapist) {
