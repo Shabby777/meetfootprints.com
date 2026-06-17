@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Coach Consultation | Footprints to Feel Better</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            burgundy: "#7B1B4E",
+            rose: "#8C1B52",
+            gold: "#B8963E",
+            mustard: "#C9A84C",
+            sand: "#F5F0E8",
+            panel: "#EDEAE2",
+            cocoa: "#9E7B5A",
+            ink: "#6B6B6B",
+            accent: "#E8758A",
+            white: "#FFFFFF"
+          },
+          fontFamily: {
+            heading: ["Cormorant Garamond", "serif"],
+            body: ["Nunito", "sans-serif"]
+          },
+          boxShadow: {
+            glow: "0 20px 60px rgba(123, 27, 78, 0.14)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 28%),
+        radial-gradient(circle at top right, rgba(232, 117, 138, 0.16), transparent 24%),
+        linear-gradient(180deg, #F5F0E8 0%, #EDEAE2 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen font-body text-ink">
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute left-[-6rem] top-[-5rem] h-80 w-80 rounded-full bg-rose/10 blur-3xl"></div>
+    <div class="absolute right-[-4rem] top-20 h-96 w-96 rounded-full bg-gold/15 blur-3xl"></div>
+    <div class="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-accent/10 blur-3xl"></div>
+  </div>
+
+  <header class="border-b border-white/60 bg-white/70 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <a href="coaches.html" class="flex items-center gap-3">
+        <img src="/icons/new-logo.png" alt="Footprints to Feel Better logo" class="h-11 w-11 rounded-2xl object-cover shadow-md">
+        <div>
+          <p class="font-heading text-lg font-extrabold tracking-tight text-burgundy">Footprints to Feel Better</p>
+          <p class="text-sm text-cocoa">Coach Booking</p>
+        </div>
+      </a>
+      <a
+        href="coaches.html"
+        class="inline-flex items-center justify-center rounded-full border border-burgundy/15 bg-white px-4 py-2 text-sm font-semibold text-burgundy transition hover:-translate-y-0.5 hover:bg-burgundy hover:text-white"
+      >
+        Back to coaches
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <section class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-burgundy via-rose to-accent p-8 text-white shadow-glow lg:p-10">
+        <div class="max-w-2xl">
+          <p class="mb-4 inline-flex rounded-full bg-white/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-white/90">
+            Personalized Coaching
+          </p>
+          <h1 class="font-heading text-4xl font-extrabold leading-tight lg:text-5xl">
+            Book directly with your coach in a calm, secure flow.
+          </h1>
+          <p class="mt-5 max-w-xl text-base leading-7 text-white/85 lg:text-lg">
+            Use the coach-specific Cal.com embed below to choose a time and complete your details.
+          </p>
+        </div>
+
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <div class="rounded-3xl bg-white/12 p-5 backdrop-blur">
+            <p class="text-sm font-semibold text-white/70">Step 1</p>
+            <p class="mt-2 font-heading text-xl font-bold">Review coach</p>
+            <p class="mt-2 text-sm leading-6 text-white/80">Confirm the coach shown on this page.</p>
+          </div>
+          <div class="rounded-3xl bg-white/12 p-5 backdrop-blur">
+            <p class="text-sm font-semibold text-white/70">Step 2</p>
+            <p class="mt-2 font-heading text-xl font-bold">Pick your slot</p>
+            <p class="mt-2 text-sm leading-6 text-white/80">Use the embedded Cal.com scheduler to choose date and time.</p>
+          </div>
+          <div class="rounded-3xl bg-white/12 p-5 backdrop-blur">
+            <p class="text-sm font-semibold text-white/70">Step 3</p>
+            <p class="mt-2 font-heading text-xl font-bold">Confirm booking</p>
+            <p class="mt-2 text-sm leading-6 text-white/80">Complete your contact details directly in the embed.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="rounded-[2rem] bg-white/90 p-6 shadow-glow ring-1 ring-panel lg:p-7">
+        <div class="flex items-start gap-4">
+          <div
+            id="coach-avatar"
+            class="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-burgundy to-accent text-2xl font-extrabold text-white shadow-lg"
+          >
+            --
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-cocoa">Selected coach</p>
+            <h2 id="coach-name" class="mt-2 font-heading text-2xl font-extrabold text-burgundy">Loading...</h2>
+            <p id="coach-role" class="mt-1 text-sm text-cocoa"></p>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl bg-sand p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa">Experience</p>
+            <p id="coach-experience" class="mt-2 font-heading text-2xl font-bold text-ink"></p>
+          </div>
+          <div class="rounded-2xl bg-sand p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa">Availability</p>
+            <p id="coach-availability" class="mt-2 font-heading text-2xl font-bold text-ink"></p>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl bg-panel p-5 ring-1 ring-panel">
+          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa">Booking method</p>
+          <div class="mt-4 space-y-3 text-sm text-ink">
+            <div class="flex items-center justify-between gap-3">
+              <span>Platform</span>
+              <span class="font-semibold text-ink">Cal.com</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span>Booking type</span>
+              <span class="font-semibold text-ink">Video consultation</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span>Status</span>
+              <span class="font-semibold text-ink">Ready to schedule</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl bg-sand p-5 text-burgundy">
+          <p class="font-heading text-lg font-bold">What happens next?</p>
+          <p class="mt-2 text-sm leading-6 text-ink">
+            Complete scheduling directly in the embedded Cal.com flow, including slot selection and your contact details.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="mt-10">
+      <div class="rounded-[2rem] bg-white/90 p-6 shadow-glow ring-1 ring-panel lg:p-8">
+        <div class="flex flex-col gap-4 border-b border-panel pb-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-cocoa">Cal.com booking</p>
+            <h2 class="mt-2 font-heading text-3xl font-extrabold text-burgundy">Pick your appointment</h2>
+          </div>
+          <p class="max-w-md text-sm leading-6 text-ink">
+            Select your preferred slot and complete the required booking details in the embedded calendar below.
+          </p>
+        </div>
+
+        <div class="mt-8">
+          <iframe
+            id="cal-embed-frame"
+            title="Cal.com booking"
+            class="h-[850px] w-full rounded-3xl border border-[#edd9dd] bg-white"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+
+          <div id="cal-embed-fallback" class="hidden rounded-3xl border border-panel bg-sand p-6 text-burgundy">
+            <p class="text-sm font-semibold">A Cal.com link is not set for this coach yet.</p>
+            <p class="mt-2 text-sm">Add a coach-specific Cal.com URL in <code>data/coaches.json</code> to enable the embedded booking.</p>
+          </div>
+        </div>
+
+        <div id="cal-direct-link-wrap" class="mt-6 rounded-3xl bg-sand p-5 text-burgundy">
+          <p class="font-heading text-lg font-bold">Prefer opening in a new tab?</p>
+          <p class="mt-2 text-sm leading-6 text-ink">
+            Use this direct booking link:
+            <a id="cal-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="font-semibold underline decoration-2 underline-offset-4">Open Cal.com</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="coach-booking.js" defer></script>
+</body>
+</html>

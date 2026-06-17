@@ -397,6 +397,11 @@ select {
   box-shadow: 0 12px 28px rgba(145, 25, 73, 0.08);
   transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
+.landing-hero-button:hover {
+border-color: transparent;
+  background: linear-gradient(135deg, var(--rose-900), var(--rose-700));
+  color: #fff;
+}
 
 @media (max-width: 1280px) and (min-width: 901px) {
   .landing-hero-copy {
@@ -418,11 +423,6 @@ select {
   box-shadow: 0 18px 34px rgba(145, 25, 73, 0.16);
 }
 
-.landing-hero-button-primary {
-  border-color: transparent;
-  background: linear-gradient(135deg, var(--rose-900), var(--rose-700));
-  color: #fff;
-}
 
 .landing-hero-button span {
   display: inline-flex;
