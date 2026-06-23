@@ -228,6 +228,7 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+#variable_conflict use_column
 declare
   v_session record;
 begin
@@ -367,7 +368,11 @@ begin
     end if;
 
     v_target_id := regexp_replace(lower(v_name), '[^a-z0-9]+', '-', 'g');
-    v_target_id := trim(both '-' from v_target_id) || '-' || floor(extract(epoch from now()))::bigint;
+    v_target_id := trim(both '-' from v_target_id);
+
+    if v_target_id = '' then
+      raise exception 'Name must contain at least one letter or number';
+    end if;
   end if;
 
   if v_session.role = 'therapist' and v_target_id <> v_session.therapist_id then

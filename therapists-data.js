@@ -31,6 +31,12 @@
       .slice(0, 80);
   }
 
+  function stripNumericSuffix(value) {
+    return String(value || "")
+      .trim()
+      .replace(/-\d+$/, "");
+  }
+
   function toArray(value) {
     if (Array.isArray(value)) {
       return value.map((item) => String(item).trim()).filter(Boolean);
@@ -50,7 +56,7 @@
     const base = { ...EMPTY_THERAPIST };
     const next = { ...base, ...(record || {}) };
     return {
-      id: String(next.id || slugify(next.name) || `therapist-${Date.now()}`),
+      id: String(next.id || slugify(next.name) || ""),
       email: String(next.email || "").trim().toLowerCase(),
       name: String(next.name || "").trim(),
       image: String(next.image || base.image).trim() || base.image,
@@ -115,13 +121,17 @@
     }
 
     try {
-      const rawPayload = window.localStorage.getItem(getTherapistUpdateKey(therapistId));
-      if (!rawPayload) {
-        return null;
-      }
+      const lookupIds = [String(therapistId || "").trim(), stripNumericSuffix(therapistId)];
+      for (const lookupId of [...new Set(lookupIds.filter(Boolean))]) {
+        const rawPayload = window.localStorage.getItem(getTherapistUpdateKey(lookupId));
+        if (!rawPayload) {
+          continue;
+        }
 
-      const payload = JSON.parse(rawPayload);
-      return payload && payload.therapist ? normalizeTherapist(payload.therapist) : null;
+        const payload = JSON.parse(rawPayload);
+        return payload && payload.therapist ? normalizeTherapist(payload.therapist) : null;
+      }
+      return null;
     } catch (error) {
       return null;
     }
@@ -151,6 +161,29 @@
     const primaryTime = Date.parse(primaryTherapist.updatedAt || "") || 0;
     const fallbackTime = Date.parse(fallbackTherapist.updatedAt || "") || 0;
     return fallbackTime > primaryTime ? fallbackTherapist : primaryTherapist;
+  }
+
+  function findTherapistByIdentifier(therapists, therapistId) {
+    const normalizedId = String(therapistId || "").trim();
+    if (!normalizedId) {
+      return null;
+    }
+
+    const fallbackId = stripNumericSuffix(normalizedId);
+
+    return therapists.find((therapist) => {
+      if (!therapist) {
+        return false;
+      }
+
+      const therapistIdValue = String(therapist.id || "").trim();
+      const therapistSlug = slugify(therapist.name);
+      if (therapistIdValue === normalizedId || therapistIdValue === fallbackId) {
+        return true;
+      }
+
+      return therapistSlug === normalizedId || therapistSlug === fallbackId;
+    }) || null;
   }
 
   async function fetchJsonFallback(fallbackUrl, fallbackData) {
@@ -361,7 +394,7 @@
     }
 
     const therapists = await loadTherapists(options);
-    const fallbackTherapist = therapists.find((therapist) => therapist.id === therapistId) || null;
+    const fallbackTherapist = findTherapistByIdentifier(therapists, therapistId);
     return getMostRecentTherapist(fallbackTherapist, getCachedUpdatedTherapist(therapistId));
   }
 
@@ -531,11 +564,13 @@
     isAllowedStaffEmail,
     normalizeStaffEmail,
     slugify,
+    stripNumericSuffix,
     normalizeTherapist,
     cacheUpdatedTherapist,
     getCachedUpdatedTherapist,
     parseTherapistUpdateEvent,
     getMostRecentTherapist,
+    findTherapistByIdentifier,
     loadTherapists,
     loadPortalTherapists,
     loadPortalTherapistById,
