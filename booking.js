@@ -81,7 +81,7 @@ function resolveTherapistFromQuery() {
     return bookingState.therapists[0] || null;
   }
 
-  return bookingState.therapists.find((therapist) => therapist.id === therapistId) || null;
+  return window.therapistDataApi.findTherapistByIdentifier(bookingState.therapists, therapistId);
 }
 
 function renderTherapistDetails() {
@@ -134,11 +134,12 @@ function renderCalEmbed() {
 }
 
 function resolveTherapistCalLink(therapist) {
-  if (!therapist || !therapist.id) {
+  if (!therapist) {
     return "";
   }
 
-  const mappedLink = calLinkByTherapistId[therapist.id];
+  const therapistSlug = window.therapistDataApi.slugify(therapist.name) || "";
+  const mappedLink = calLinkByTherapistId[therapist.id] || calLinkByTherapistId[therapistSlug];
   if (mappedLink) {
     return mappedLink;
   }
@@ -147,11 +148,11 @@ function resolveTherapistCalLink(therapist) {
     return therapist.calLink;
   }
 
-  if (therapistsWithoutCalLinks.has(therapist.id)) {
+  if (therapistsWithoutCalLinks.has(therapist.id) || therapistsWithoutCalLinks.has(therapistSlug)) {
     return "";
   }
 
-  return `${CAL_BASE_URL}/${therapist.id}`;
+  return therapistSlug ? `${CAL_BASE_URL}/${therapistSlug}` : "";
 }
 
 function toCalEmbedUrl(rawUrl) {
