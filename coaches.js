@@ -188,6 +188,10 @@ function getInitials(name) {
     .join("");
 }
 
+function getCoachImage(coach) {
+  return String(coach && coach.image ? coach.image : "").trim();
+}
+
 function getAccentClasses(id) {
   const variants = [
     "from-burgundy to-accent",
@@ -213,6 +217,37 @@ function formatCoachMeta(coach) {
   return items.join(" | ");
 }
 
+function renderCoachAvatar(container, coach, sizeClass, initialsClass) {
+  const initials = getInitials(coach.name) || "C";
+  const imageSrc = getCoachImage(coach);
+
+  container.replaceChildren();
+  container.classList.add("overflow-hidden", "bg-gradient-to-br", ...getAccentClasses(coach.id).split(" "));
+
+  if (imageSrc) {
+    const image = document.createElement("img");
+    image.src = imageSrc;
+    image.alt = coach.name ? `${coach.name} portrait` : "Coach portrait";
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.className = "h-full w-full object-cover";
+    image.addEventListener("error", () => {
+      image.remove();
+      const fallback = document.createElement("span");
+      fallback.className = initialsClass;
+      fallback.textContent = initials;
+      container.appendChild(fallback);
+    }, { once: true });
+    container.appendChild(image);
+    return;
+  }
+
+  const fallback = document.createElement("span");
+  fallback.className = initialsClass;
+  fallback.textContent = initials;
+  container.appendChild(fallback);
+}
+
 function renderCoaches(coaches) {
   const fragment = document.createDocumentFragment();
 
@@ -224,8 +259,13 @@ function renderCoaches(coaches) {
     mediaWrap.className = "flex items-center gap-4";
 
     const avatar = document.createElement("div");
-    avatar.className = `flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-gradient-to-br ${getAccentClasses(coach.id)} text-2xl font-extrabold text-white shadow-lg`;
-    avatar.textContent = getInitials(coach.name) || "C";
+    avatar.className = `flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] text-2xl font-extrabold text-white shadow-lg`;
+    renderCoachAvatar(
+      avatar,
+      coach,
+      "h-20 w-20",
+      "flex h-full w-full items-center justify-center bg-gradient-to-br text-2xl font-extrabold text-white"
+    );
 
     const mediaText = document.createElement("div");
     mediaText.className = "min-w-0";

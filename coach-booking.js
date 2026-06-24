@@ -58,6 +58,19 @@ function normalizeCoach(coach) {
   };
 }
 
+function getCoachImage(coach) {
+  return String(coach && coach.image ? coach.image : "").trim();
+}
+
+function getCoachInitials(name) {
+  return String(name || "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
+
 function resolveCoachFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const coachId = params.get("coach") || params.get("therapist");
@@ -68,20 +81,47 @@ function resolveCoachFromQuery() {
   return COACH_BOOKING_STATE.coaches.find((coach) => coach.id === coachId) || null;
 }
 
+function renderCoachAvatar() {
+  const coach = COACH_BOOKING_STATE.coach;
+  if (!coachBookingElements.avatar || !coach) {
+    return;
+  }
+
+  const initials = getCoachInitials(coach.name) || "C";
+  const imageSrc = getCoachImage(coach);
+
+  coachBookingElements.avatar.replaceChildren();
+  coachBookingElements.avatar.classList.add("overflow-hidden");
+
+  if (imageSrc) {
+    const image = document.createElement("img");
+    image.src = imageSrc;
+    image.alt = coach.name ? `${coach.name} portrait` : "Coach portrait";
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.className = "h-full w-full object-cover";
+    image.addEventListener("error", () => {
+      image.remove();
+      const fallback = document.createElement("span");
+      fallback.className = "flex h-full w-full items-center justify-center bg-gradient-to-br from-burgundy to-accent text-2xl font-extrabold text-white";
+      fallback.textContent = initials;
+      coachBookingElements.avatar.appendChild(fallback);
+    }, { once: true });
+    coachBookingElements.avatar.appendChild(image);
+    return;
+  }
+
+  const fallback = document.createElement("span");
+  fallback.className = "flex h-full w-full items-center justify-center bg-gradient-to-br from-burgundy to-accent text-2xl font-extrabold text-white";
+  fallback.textContent = initials;
+  coachBookingElements.avatar.appendChild(fallback);
+}
+
 function renderCoachDetails() {
   const coach = COACH_BOOKING_STATE.coach;
   document.title = `Book Consultation with ${coach.name} | Footprints to Feel Better`;
 
-  const initials = coach.name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join("");
-
-  if (coachBookingElements.avatar) {
-    coachBookingElements.avatar.textContent = initials || "C";
-  }
+  renderCoachAvatar();
 
   if (coachBookingElements.name) {
     coachBookingElements.name.textContent = coach.name;
