@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Sessions | Footprints to Feel Better</title>
+  <meta name="description" content="Explore our coaching sessions at Footprints to Feel Better, including personal life coaching, career advancement, relationships, anger management, stress, and grief support.">
+  <link rel="icon" type="image/png" href="/icons/new-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+  <header class="home-header">
+    <div class="home-topbar">
+      <a class="home-brand" href="index.html" aria-label="Footprints to Feel Better home">
+        <img class="home-brand-logo" src="/icons/new-logo.png" alt="Footprints to Feel Better logo">
+        <span class="home-brand-name">Footprints to Feel Better</span>
+      </a>
+      <nav class="home-nav" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="sessions.html" aria-current="page">Our Sessions</a>
+        <a href="clinical-staff.html">Clinical Staff</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="home-actions">
+        <a class="home-cta home-cta-desktop" href="tel:+19173523625">(917) 352-3625</a>
+        <button class="home-menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+    <div class="home-service-strip">Mental Health Nationwide</div>
+    <div class="home-mobile-menu" id="mobile-menu" hidden>
+      <nav class="home-mobile-links" aria-label="Mobile navigation">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="sessions.html" aria-current="page">Our Sessions</a>
+        <a href="clinical-staff.html">Clinical Staff</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a class="home-cta home-cta-mobile" href="clinical-staff.html">Find Your Therapist</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero page-hero-services" aria-labelledby="sessions-hero-title">
+      <div class="home-shell page-hero-grid">
+        <div class="page-hero-copy">
+          <p class="home-section-tag">Our Services</p>
+          <h1 id="sessions-hero-title">Sessions designed to match where you are.</h1>
+          <p>We offer specialized coaching across personal, professional, and emotional areas, providing structured guidance to build clarity, resilience, and growth.</p>
+        </div>
+        <!-- <div class="page-hero-note">
+          <strong>Your path forward</strong>
+          <p>Find the session category that matches your goals. Click 'Inquire Now' to open our brief inquiry form and begin matched support.</p>
+        </div> -->
+      </div>
+    </section>
+
+    <section class="page-section" aria-labelledby="sessions-list-title">
+      <div class="home-shell">
+        <!-- <div class="page-section-head">
+          <div>
+            <p class="home-section-tag">Coaching Sessions</p>
+            <h2 class="page-title" id="sessions-list-title">Structured sessions to support daily realities.</h2>
+          </div>
+        </div> -->
+        <div class="sessions-grid">
+          <!-- Card 1: Personal Life Coaching -->
+          <article class="feature-panel">
+            <h3>Personal Life Coaching</h3>
+            <img class="session-card-image" src="images/personal_coaching.png" alt="Personal Life Coaching illustration representing a path and growth">
+            <p>Embark on a journey of self-discovery and personal growth. Our sessions help you identify your core values, set meaningful goals, and overcome obstacles hindering your progress.</p>
+            <ul class="detail-list">
+              <li>Clarify core values & purpose</li>
+              <li>Set and achieve life goals</li>
+              <li>Overcome personal roadblocks</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Personal Life Coaching">Inquire Now</button>
+          </article>
+
+          <!-- Card 2: Career Advancement Coaching -->
+          <article class="feature-panel">
+            <h3>Career Advancement Coaching</h3>
+            <img class="session-card-image" src="images/career_coaching.png" alt="Career Advancement Coaching illustration representing steps to progress">
+            <p>Navigate professional transitions, clarify your goals, and develop key leadership capabilities. Build confidence, map out your career paths, and realize your ambitions.</p>
+            <ul class="detail-list">
+              <li>Professional transition mapping</li>
+              <li>Leadership skills development</li>
+              <li>Confidence & career strategy</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Career Advancement Coaching">Inquire Now</button>
+          </article>
+
+          <!-- Card 3: Relationship Growth Coaching -->
+          <article class="feature-panel">
+            <h3>Relationship Growth Coaching</h3>
+            <img class="session-card-image" src="images/relationship_coaching.png" alt="Relationship Growth Coaching illustration representing healthy communication">
+            <p>Strengthen connections, develop healthy communication patterns, and resolve conflicts. Navigate romantic, family, or social relationship dynamics with confidence.</p>
+            <ul class="detail-list">
+              <li>Healthy communication patterns</li>
+              <li>Conflict resolution strategies</li>
+              <li>Stronger family & partner bonds</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Relationship Growth Coaching">Inquire Now</button>
+          </article>
+
+          <!-- Card 4: Anger Management Session -->
+          <article class="feature-panel">
+            <h3>Anger Management Session</h3>
+            <img class="session-card-image" src="images/anger_management.png" alt="Anger Management Session illustration representing self-regulation and peace">
+            <p>Learn to understand, regulate, and channel anger in healthy, constructive ways. Acquire practical coping tools, cognitive strategies, and mindfulness techniques.</p>
+            <ul class="detail-list">
+              <li>Identify anger triggers</li>
+              <li>Constructive coping mechanisms</li>
+              <li>Mindfulness & self-regulation</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Anger Management Session">Inquire Now</button>
+          </article>
+
+          <!-- Card 5: Stress & Burnout Coaching -->
+          <article class="feature-panel">
+            <h3>Stress & Burnout Coaching</h3>
+            <img class="session-card-image" src="images/stress_burnout.png" alt="Stress and Burnout Coaching illustration representing candles and boundaries">
+            <p>Reclaim your energy, establish healthy boundaries, and restore balance to your daily life. Designed for high-stress professionals and caregivers to build sustainable self-care.</p>
+            <ul class="detail-list">
+              <li>Identify burnout indicators</li>
+              <li>Work-life boundary establishment</li>
+              <li>Sustainable self-care routines</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Stress & Burnout Coaching">Inquire Now</button>
+          </article>
+
+          <!-- Card 6: Grief & Life Transitions Support -->
+          <article class="feature-panel">
+            <h3>Grief & Life Transitions Support</h3>
+            <img class="session-card-image" src="images/grief_transition.png" alt="Grief and Transitions Support illustration representing bird flight and resilience">
+            <p>Navigate major shifts like relocation, career changes, or loss with compassionate structure. Process difficult emotional adjustments while building your resilience.</p>
+            <ul class="detail-list">
+              <li>Navigating career or path shifts</li>
+              <li>Processing grief and loss</li>
+              <li>Resilience & adjustment tools</li>
+            </ul>
+            <button class="home-cta session-cta-btn" type="button" data-session="Grief & Life Transitions Support">Inquire Now</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section page-section-soft" aria-labelledby="steps-title">
+      <div class="home-shell">
+        <div class="page-section-head">
+          <div>
+            <p class="home-section-tag">Next Steps</p>
+            <h2 class="page-title" id="steps-title">A simpler path into care.</h2>
+          </div>
+        </div>
+        <div class="step-grid">
+          <article class="step-card">
+            <span>01</span>
+            <h3>Browse our sessions</h3>
+            <p>Review the coaching focus areas above to find the type of support that aligns with your current goals.</p>
+          </article>
+          <article class="step-card">
+            <span>02</span>
+            <h3>Submit your inquiry</h3>
+            <p>Click 'Inquire Now' to share a brief note about what you are seeking and what you hope to address.</p>
+          </article>
+          <article class="step-card">
+            <span>03</span>
+            <h3>Connect with a coach</h3>
+            <p>Our team will reach out to match you with a coach, discuss pricing, and set up your initial session.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- <section class="home-cta-band">
+      <div class="home-shell home-cta-band-inner">
+        <div>
+          <p class="home-section-tag light">Ready to take the next step?</p>
+          <h2>Find a therapist or coach whose focus areas and care style match what you need most.</h2>
+        </div>
+        <a class="home-cta home-cta-light" href="clinical-staff.html">Find Your Therapist</a>
+      </div>
+    </section> -->
+  </main>
+
+  <footer class="home-footer">
+    <div class="home-shell home-footer-grid">
+      <div>
+        <a class="home-brand home-brand-footer" href="index.html">
+          <img class="home-brand-logo" src="/icons/new-logo.png" alt="Footprints to Feel Better logo">
+          <span class="home-brand-name">Footprints to Feel Better</span>
+        </a>
+        <p class="home-footer-copy">Supportive mental health care with warmth, professionalism, and easier ways to find the right fit.</p>
+      </div>
+      <div class="home-footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="sessions.html" aria-current="page">Our Sessions</a>
+        <a href="clinical-staff.html">Clinical Staff</a>
+        <a href="coaches.html">Coaches</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="home-footer-contact">
+        <a href="tel:+19173523625">(917) 352-3625</a>
+        <p>Open 7 days a week, 6 AM to 10 PM</p>
+        <p id="home-year"></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Native Modal Dialog for Service Inquiry -->
+  <dialog id="inquiry-dialog" closedby="any" aria-labelledby="dialog-title" class="inquiry-dialog">
+    <button class="dialog-close-btn" id="dialog-close-btn" aria-label="Close dialog" type="button">&times;</button>
+    <div class="dialog-content">
+      <p class="home-section-tag">Service Inquiry</p>
+      <h2 id="dialog-title" class="page-title" style="font-size: clamp(2rem, 3.5vw, 2.8rem); margin-bottom: 8px;">Tell us how we can support you.</h2>
+      <form class="contact-form" id="inquiry-form" action="#">
+        <label>
+          <span>First Name *</span>
+          <input type="text" name="firstName" required placeholder="First name">
+        </label>
+        <label>
+          <span>Last Name *</span>
+          <input type="text" name="lastName" required placeholder="Last name">
+        </label>
+        <label>
+          <span>Email Address *</span>
+          <input type="email" name="email" required placeholder="you@example.com">
+        </label>
+        <label>
+          <span>Phone number *</span>
+          <input type="tel" name="phone" required placeholder="(555) 555-5555">
+        </label>
+        <label class="contact-form-full">
+          <span>Which service are you interested in? *</span>
+          <select name="service" id="form-service-select" required>
+            <option value="" disabled>Select a coaching service</option>
+            <option value="Personal Life Coaching">Personal Life Coaching</option>
+            <option value="Career Advancement Coaching">Career Advancement Coaching</option>
+            <option value="Relationship Growth Coaching">Relationship Growth Coaching</option>
+            <option value="Anger Management Session">Anger Management Session</option>
+            <option value="Stress & Burnout Coaching">Stress & Burnout Coaching</option>
+            <option value="Grief & Life Transitions Support">Grief & Life Transitions Support</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label class="contact-form-full">
+          <span>Add a message or tell us more about what you need</span>
+          <textarea name="message" rows="4" placeholder="Share a bit about what support you're seeking."></textarea>
+        </label>
+        <button class="home-cta" type="submit" style="border: none; cursor: pointer;">Submit Inquiry</button>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="home.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const dialog = document.getElementById("inquiry-dialog");
+      const serviceSelect = document.getElementById("form-service-select");
+      const closeBtn = document.getElementById("dialog-close-btn");
+      const form = document.getElementById("inquiry-form");
+
+      // Open modal and pre-select service on CTA button click
+      document.querySelectorAll(".session-cta-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const sessionName = btn.getAttribute("data-session");
+          if (sessionName && serviceSelect) {
+            serviceSelect.value = sessionName;
+          }
+          if (dialog) {
+            dialog.showModal();
+          }
+        });
+      });
+
+      // Close modal on X button click
+      if (closeBtn && dialog) {
+        closeBtn.addEventListener("click", () => {
+          dialog.close();
+        });
+      }
+
+      // Close modal on backdrop click (fallback for older browsers without closedby="any" support)
+      if (dialog && !('closedBy' in HTMLDialogElement.prototype)) {
+        dialog.addEventListener("click", (event) => {
+          if (event.target !== dialog) return;
+
+          const rect = dialog.getBoundingClientRect();
+          const isDialogContent = (
+            rect.top <= event.clientY &&
+            event.clientY <= rect.top + rect.height &&
+            rect.left <= event.clientX &&
+            event.clientX <= rect.left + rect.width
+          );
+
+          if (!isDialogContent) {
+            dialog.close();
+          }
+        });
+      }
+
+      // Handle form submission
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+          
+          // Construct the email content
+          const emailRecipient = "intake@footprintstofeelbetter.com";
+          const subject = `Service Inquiry: ${data.service} - ${data.firstName} ${data.lastName}`;
+          const body = `Hello Footprints Team,
+
+You have received a new service inquiry from the website.
+
+Inquiry Details:
+------------------------------------------
+First Name: ${data.firstName}
+Last Name: ${data.lastName}
+Email Address: ${data.email}
+Phone Number: ${data.phone}
+Interested Service: ${data.service}
+
+Message / Additional Notes:
+${data.message || 'No additional message provided.'}
+
+------------------------------------------
+Submitted via "Our Sessions" page.`;
+
+          // Generate and open the mailto URL
+          const mailtoUrl = `mailto:${emailRecipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+          window.location.href = mailtoUrl;
+          
+          // Reset form and close dialog
+          form.reset();
+          if (dialog) {
+            dialog.close();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

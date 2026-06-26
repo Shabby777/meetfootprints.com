@@ -442,3 +442,172 @@
     min-height: 340px;
   }
 }
+
+/* --- Our Sessions & Inquiry Modal Styles --- */
+
+.sessions-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.sessions-grid .feature-panel {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 380px;
+}
+
+.sessions-grid .feature-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(111, 11, 63, 0.08);
+}
+
+.session-cta-btn {
+  margin-top: 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+}
+
+/* Modal Dialog */
+.inquiry-dialog {
+  border: none;
+  border-radius: 28px;
+  padding: 0;
+  max-width: 650px;
+  width: 90%;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 24px 64px rgba(111, 33, 67, 0.18), 0 0 1px rgba(111, 33, 67, 0.2);
+  overflow: hidden;
+  max-height: 85vh;
+}
+
+.inquiry-dialog:not([open]) {
+  display: none !important;
+}
+
+.inquiry-dialog::backdrop {
+  background-color: rgba(43, 29, 34, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dialog-content {
+  padding: 40px;
+  position: relative;
+  overflow-y: auto;
+  max-height: 85vh;
+  box-sizing: border-box;
+}
+
+.inquiry-dialog h2.page-title {
+  padding-right: 48px;
+}
+
+.dialog-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: none;
+  background: rgba(111, 33, 67, 0.06);
+  color: var(--rose-950);
+  font-size: 26px;
+  font-weight: 400;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10;
+}
+
+.dialog-close-btn:focus {
+  outline: none;
+}
+
+.dialog-close-btn:focus-visible {
+  outline: 2px solid var(--rose-700);
+  outline-offset: 2px;
+}
+
+.dialog-close-btn:hover {
+  background: rgba(111, 33, 67, 0.12);
+  transform: scale(1.05);
+}
+
+/* Custom premium focus styles for form elements inside the modal */
+.inquiry-dialog .contact-form input:focus,
+.inquiry-dialog .contact-form select:focus,
+.inquiry-dialog .contact-form textarea:focus {
+  outline: none;
+  border-color: var(--rose-700);
+  box-shadow: 0 0 0 3px rgba(155, 27, 89, 0.12);
+}
+
+.inquiry-dialog .contact-form .home-cta {
+  margin-top: 8px;
+}
+
+/* Animations */
+@keyframes modalScaleUp {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.session-card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 18px;
+  margin: 12px 0 16px;
+  box-shadow: 0 4px 12px rgba(111, 33, 67, 0.04);
+}
+
+/* Responsiveness overrides */
+@media (max-width: 1100px) {
+  .sessions-grid .feature-panel {
+    grid-column: span 6;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .sessions-grid {
+    grid-template-columns: 1fr;
+  }
+  .sessions-grid .feature-panel {
+    grid-column: span 12;
+  }
+  .dialog-content {
+    padding: 24px;
+  }
+  .dialog-close-btn {
+    top: 14px;
+    right: 14px;
+  }
+}
+
