@@ -611,3 +611,98 @@
   }
 }
 
+/* Vertical timeline steps styling */
+.step-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 800px;
+  margin: 40px auto 0;
+  padding-left: 10px;
+}
+
+.step-timeline::before {
+  content: "";
+  position: absolute;
+  left: 31px; /* 10px padding + 22px (center of the 44px number circle) - 1px (half of line width) */
+  top: 22px;
+  bottom: 22px;
+  width: 2px;
+  border-left: 2px dotted var(--rose-300); /* dotted line matching the theme's rose color */
+  z-index: 1;
+}
+
+.step-timeline-item {
+  position: relative;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.step-timeline-number {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--rose-100);
+  color: var(--rose-900);
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: 0 0 0 6px rgb(255, 248, 250); /* Masks the dotted line behind the circle */
+  border: 1px solid var(--rose-200);
+  position: relative;
+  z-index: 3;
+}
+
+.step-timeline-content {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-card);
+  flex-grow: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step-timeline-content:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(111, 11, 63, 0.04);
+}
+
+.step-timeline-content h3 {
+  margin: 0 0 8px;
+  color: var(--rose-950);
+  font-size: 1.3rem;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+}
+
+.step-timeline-content p {
+  margin: 0;
+  color: var(--ink-700);
+  line-height: 1.65;
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  .step-timeline {
+    padding-left: 0;
+    gap: 24px;
+  }
+  .step-timeline::before {
+    left: 21px; /* adjustments centered position for smaller paddings */
+  }
+  .step-timeline-item {
+    gap: 16px;
+  }
+  .step-timeline-content {
+    padding: 20px;
+  }
+}
+
+
