@@ -235,8 +235,9 @@
     <button class="dialog-close-btn" id="dialog-close-btn" aria-label="Close dialog" type="button">&times;</button>
     <div class="dialog-content">
       <p class="home-section-tag">Service Inquiry</p>
-      <!-- <h2 id="dialog-title" class="page-title" style="font-size: clamp(2rem, 3.5vw, 2.8rem); margin-bottom: 8px;">Tell us how we can support you.</h2> -->
-      <form class="contact-form" id="inquiry-form" action="#">
+      <p id="inquiry-status" class="inquiry-status" role="status" aria-live="polite" hidden></p>
+      <form class="contact-form" id="inquiry-form" action="send-inquiry.php" method="post">
+        <input type="text" name="companyWebsite" tabindex="-1" autocomplete="off" aria-hidden="true" class="inquiry-honeypot" value="">
         <label>
           <span>First Name *</span>
           <input type="text" name="firstName" required placeholder="First name">
@@ -282,14 +283,44 @@
       const serviceSelect = document.getElementById("form-service-select");
       const closeBtn = document.getElementById("dialog-close-btn");
       const form = document.getElementById("inquiry-form");
+      const statusEl = document.getElementById("inquiry-status");
+      const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+      const endpoint = form ? form.getAttribute("action") || "send-inquiry.php" : "send-inquiry.php";
+      let closeTimer = null;
+      const isFilePreview = window.location.protocol === "file:";
+
+      const showStatus = (message, state) => {
+        if (!statusEl) {
+          return;
+        }
+
+        statusEl.hidden = !message;
+        statusEl.textContent = message || "";
+        statusEl.dataset.state = state || "";
+      };
+
+      const setSubmitting = (isSubmitting) => {
+        if (submitButton) {
+          submitButton.disabled = isSubmitting;
+          submitButton.textContent = isSubmitting ? "Sending..." : "Submit Inquiry";
+        }
+      };
 
       // Open modal and pre-select service on CTA button click
       document.querySelectorAll(".session-cta-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const sessionName = btn.getAttribute("data-session");
+          if (form) {
+            form.reset();
+          }
+          if (closeTimer) {
+            window.clearTimeout(closeTimer);
+            closeTimer = null;
+          }
           if (sessionName && serviceSelect) {
             serviceSelect.value = sessionName;
           }
+          showStatus("", "");
           if (dialog) {
             dialog.showModal();
           }
@@ -324,41 +355,52 @@
 
       // Handle form submission
       if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
           e.preventDefault();
-          
+
+          if (isFilePreview) {
+            showStatus("This page is open as a local file, so PHP cannot run. Please preview it from a PHP server or upload it to Hostinger to send inquiries.", "error");
+            return;
+          }
+
           const formData = new FormData(form);
-          const data = Object.fromEntries(formData.entries());
-          
-          // Construct the email content
-          const emailRecipient = "intake@footprintstofeelbetter.com";
-          const subject = `Service Inquiry: ${data.service} - ${data.firstName} ${data.lastName}`;
-          const body = `Hello Footprints Team,
+          showStatus("", "");
+          setSubmitting(true);
 
-You have received a new service inquiry from the website.
+          try {
+            const response = await fetch(endpoint, {
+              method: "POST",
+              body: formData,
+              headers: {
+                "Accept": "application/json",
+              },
+            });
 
-Inquiry Details:
-------------------------------------------
-First Name: ${data.firstName}
-Last Name: ${data.lastName}
-Email Address: ${data.email}
-Phone Number: ${data.phone}
-Interested Service: ${data.service}
+            const contentType = response.headers.get("content-type") || "";
+            const payload = contentType.includes("application/json")
+              ? await response.json().catch(() => null)
+              : null;
 
-Message / Additional Notes:
-${data.message || 'No additional message provided.'}
+            if (!response.ok || !payload || !payload.ok) {
+              const message = response.status === 405
+                ? "This form needs a PHP-enabled server to send email. Live Server on 127.0.0.1:5500 cannot run send-inquiry.php."
+                : (payload && payload.message ? payload.message : "We could not send your inquiry right now. Please try again or email intake directly.");
+              throw new Error(message);
+            }
 
-------------------------------------------
-Submitted via "Our Sessions" page.`;
-
-          // Generate and open the mailto URL
-          const mailtoUrl = `mailto:${emailRecipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-          window.location.href = mailtoUrl;
-          
-          // Reset form and close dialog
-          form.reset();
-          if (dialog) {
-            dialog.close();
+            showStatus("Your inquiry has been sent. Our team will review it and follow up soon.", "success");
+            form.reset();
+            closeTimer = window.setTimeout(() => {
+              if (dialog) {
+                dialog.close();
+              }
+              showStatus("", "");
+              closeTimer = null;
+            }, 1600);
+          } catch (error) {
+            showStatus(error.message || "Something went wrong while sending your inquiry.", "error");
+          } finally {
+            setSubmitting(false);
           }
         });
       }

@@ -29,6 +29,11 @@ Development notes
 - The app is intentionally simple (no bundler). JS modules are monolithic; consider refactoring into smaller modules if adding complexity.
 - Client-side events and storage are used to propagate therapist updates between pages.
 
+Inquiry form email setup
+- `sessions.html` submits to `send-inquiry.php`, which sends mail through SMTP.
+- Copy `smtp-config.example.php` to `smtp-config.php` and fill in your Hostinger SMTP details, or set the matching `SMTP_*` environment variables.
+- The inquiry destination is `intake@meetfootprints.com`.
+
 Suggested next tasks
 1. Inventory & docs (done: README created)
 2. Confirm Supabase project settings and keys
